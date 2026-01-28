@@ -1,0 +1,21 @@
+# VSCode
+.vscode/
+.history/
+.vscode-server/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+*.sublime-workspace
+
+*.override.yml
+
+**/(generated)
+**/(generated)/*
