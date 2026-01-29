@@ -1,0 +1,336 @@
+---
+title: My Clients - GCP Deployment Test Strategy
+description: Comprehensive testing approach for validating Google Cloud Platform deployment
+---
+
+# My Clients - GCP Deployment Test Design
+
+## Purpose
+
+Ensure the My Clients platform functions correctly on Google Cloud Platform with performance, reliability, and security validated across all critical user journeys for nail masters and their clients.
+
+## Test Pyramid Strategy
+
+<Diagram lang="plantuml" path="test-flow.puml" alt="Test Strategy Overview" />
+
+## Testing Phases
+
+### Phase 1: Pre-Deployment Testing (Staging Environment)
+
+#### 1.1 Infrastructure Validation
+
+**Cloud Run Services:**
+- [ ] Verify frontend service deploys successfully
+- [ ] Verify backend API service deploys successfully
+- [ ] Confirm auto-scaling triggers at expected thresholds
+- [ ] Test cold start performance (< 2 seconds)
+- [ ] Validate container health checks respond correctly
+- [ ] Test graceful shutdown and connection draining
+
+**Cloud SQL Database:**
+- [ ] Verify database instance is accessible from Cloud Run
+- [ ] Test connection pooling configuration
+- [ ] Validate backup and restore procedures
+- [ ] Test automatic failover (if HA enabled)
+- [ ] Verify SSL/TLS encrypted connections
+- [ ] Test query performance with production-like data volume
+
+**Authentication (Firebase):**
+- [ ] Test nail master registration flow
+- [ ] Test login with email/password
+- [ ] Test password reset functionality
+- [ ] Test session management and token refresh
+- [ ] Verify CORS configuration for frontend domain
+- [ ] Test concurrent login from multiple devices
+
+**Cloud Storage:**
+- [ ] Test client photo upload functionality
+- [ ] Verify image resizing and optimization
+- [ ] Test file access permissions (private/public)
+- [ ] Validate CDN caching for static assets
+- [ ] Test storage lifecycle policies
+- [ ] Verify signed URL generation for secure access
+
+#### 1.2 Functional Testing
+
+**Calendar Management:**
+- [ ] Create appointment with service and client
+- [ ] Update appointment time and service
+- [ ] Delete/cancel appointment
+- [ ] View daily/weekly/monthly calendar
+- [ ] Test concurrent appointment creation (race conditions)
+- [ ] Verify appointment reminders triggered via Cloud Scheduler
+
+**Client Management:**
+- [ ] Add new client with full profile
+- [ ] Update client information
+- [ ] Search clients by name/phone
+- [ ] View client appointment history
+- [ ] Test client data pagination (100+ clients)
+- [ ] Delete client and verify data cleanup
+
+**Service Catalog:**
+- [ ] Create new service with pricing
+- [ ] Update service details and price
+- [ ] Delete service (verify referenced appointments)
+- [ ] Test service selection in appointment booking
+- [ ] Verify service pricing calculation accuracy
+
+**Analytics Dashboard:**
+- [ ] Test monthly income report generation
+- [ ] Verify client statistics accuracy
+- [ ] Test service performance metrics
+- [ ] Validate BigQuery data pipeline
+- [ ] Test report export functionality
+- [ ] Verify chart rendering with large datasets
+
+#### 1.3 Performance Testing
+
+**Load Testing Scenarios:**
+
+| Scenario | Concurrent Users | Duration | Success Criteria |
+|----------|-----------------|----------|------------------|
+| Normal Usage | 50 nail masters | 30 min | p95 < 500ms, 0% errors |
+| Peak Hours | 200 nail masters | 15 min | p95 < 1s, < 0.1% errors |
+| Stress Test | 500 nail masters | 10 min | Service remains stable |
+| Spike Test | 0→300→0 users | 20 min | Auto-scaling responds |
+
+**Test Tools:**
+- Artillery.io for API load testing
+- Lighthouse for frontend performance
+- Custom scripts for database stress testing
+
+**Metrics to Monitor:**
+- API endpoint response times (p50, p95, p99)
+- Frontend Time to Interactive (TTI)
+- Database query execution times
+- Cloud Run instance scaling latency
+- Error rates under load
+- Memory and CPU utilization
+
+#### 1.4 Security Testing
+
+**Authentication & Authorization:**
+- [ ] Test unauthorized access attempts to API endpoints
+- [ ] Verify JWT token validation
+- [ ] Test expired token handling
+- [ ] Attempt SQL injection on search fields
+- [ ] Test XSS protection in client notes
+- [ ] Verify CSRF protection on forms
+
+**Data Security:**
+- [ ] Verify database encryption at rest
+- [ ] Test SSL/TLS for all API communication
+- [ ] Validate Secret Manager credential access
+- [ ] Test IAM role permissions (least privilege)
+- [ ] Verify Cloud Storage bucket access controls
+- [ ] Test API rate limiting per user
+
+**Compliance:**
+- [ ] Verify GDPR data export functionality
+- [ ] Test data deletion (right to be forgotten)
+- [ ] Validate audit logging for sensitive operations
+- [ ] Test data backup encryption
+
+### Phase 2: Production Deployment Testing
+
+#### 2.1 Smoke Tests (Post-Deployment)
+
+Execute within 15 minutes of production deployment:
+
+- [ ] Frontend loads successfully
+- [ ] User can log in
+- [ ] Can create new appointment
+- [ ] Can view calendar
+- [ ] API health endpoint returns 200
+- [ ] Database connection successful
+- [ ] Static assets load from CDN
+- [ ] Firebase authentication works
+
+#### 2.2 Monitoring Validation
+
+**Cloud Logging:**
+- [ ] Verify application logs are captured
+- [ ] Test log-based metrics creation
+- [ ] Validate error tracking and grouping
+- [ ] Test log search and filtering
+
+**Cloud Monitoring:**
+- [ ] Verify custom metrics are reported
+- [ ] Test alerting policies trigger correctly
+- [ ] Validate dashboard displays real-time data
+- [ ] Test uptime checks for services
+
+**Error Reporting:**
+- [ ] Verify frontend errors are captured
+- [ ] Validate backend exceptions logged
+- [ ] Test error notification delivery
+- [ ] Verify error grouping and deduplication
+
+#### 2.3 Disaster Recovery Testing
+
+**Backup Validation:**
+- [ ] Restore database from automated backup
+- [ ] Verify data integrity after restore
+- [ ] Test point-in-time recovery (PITR)
+- [ ] Validate backup retention policy
+
+**Failover Testing:**
+- [ ] Simulate Cloud SQL instance failure
+- [ ] Test automatic failover to standby
+- [ ] Verify application reconnects automatically
+- [ ] Measure downtime duration
+
+**Data Loss Prevention:**
+- [ ] Simulate accidental data deletion
+- [ ] Restore from backup to staging
+- [ ] Verify no data corruption
+- [ ] Test incremental backup restore
+
+### Phase 3: Continuous Testing (Post-Launch)
+
+#### 3.1 Synthetic Monitoring
+
+**Scheduled Tests (Every 5 minutes):**
+- [ ] Login flow from multiple regions
+- [ ] Create appointment end-to-end
+- [ ] Load calendar view
+- [ ] API health checks
+- [ ] Database connectivity
+
+**Tools:**
+- Cloud Monitoring Uptime Checks
+- Custom Cloud Functions for business flow testing
+
+#### 3.2 Real User Monitoring (RUM)
+
+**Frontend Metrics:**
+- Page load performance
+- JavaScript error tracking
+- User interaction latency
+- Browser/device compatibility
+
+**Tools:**
+- Google Analytics 4
+- Web Vitals reporting
+- Custom performance markers
+
+#### 3.3 Chaos Engineering
+
+**Quarterly Resilience Tests:**
+- [ ] Kill random Cloud Run instances
+- [ ] Increase database latency artificially
+- [ ] Simulate Cloud Storage unavailability
+- [ ] Test with degraded network conditions
+- [ ] Spike traffic beyond normal capacity
+
+## Test Data Strategy
+
+### Staging Environment Data
+
+**Client Data:**
+- 500 synthetic client profiles
+- 10,000 historical appointments
+- 50 different service types
+- Mix of active and inactive clients
+
+**Nail Master Accounts:**
+- 20 test accounts with varying usage patterns
+- Different service catalogs and pricing
+- Multiple appointment densities
+
+**Production-Like Volume:**
+- Simulate 1000 active nail masters
+- 50,000 appointments per month
+- 100GB storage usage
+
+### Data Privacy
+
+- [ ] Use synthetic data generators (Faker.js)
+- [ ] No real client information in staging
+- [ ] Sanitize production data for debugging
+- [ ] Implement data masking for PII
+
+## Test Automation
+
+### CI/CD Integration
+
+```yaml
+# Cloud Build pipeline stages
+1. Unit Tests (Jest, PyTest)
+2. Integration Tests (API endpoints)
+3. Build Docker images
+4. Deploy to Staging
+5. Smoke Tests
+6. Performance Tests
+7. Security Scan
+8. Deploy to Production (manual approval)
+9. Production Smoke Tests
+```
+
+### Automated Regression Suite
+
+**Schedule:**
+- Run on every commit to main branch
+- Full suite nightly on staging
+- Smoke tests on production deploy
+- Performance tests weekly
+
+**Coverage Goals:**
+- Backend API: 80% code coverage
+- Frontend: 70% code coverage
+- Critical user paths: 100% coverage
+
+## Success Criteria
+
+### Pre-Launch Requirements
+
+| Category | Metric | Target |
+|----------|--------|--------|
+| Performance | API p95 response time | < 500ms |
+| Performance | Frontend TTI | < 3s |
+| Reliability | Uptime | > 99.5% |
+| Reliability | Error rate | < 0.1% |
+| Security | Critical vulnerabilities | 0 |
+| Security | Auth bypass attempts | 0 successful |
+| Functionality | Smoke test pass rate | 100% |
+| Functionality | Regression test pass rate | > 95% |
+
+### Post-Launch Monitoring
+
+- Monitor all metrics for 7 days post-launch
+- Daily review of Cloud Logging errors
+- Weekly performance trend analysis
+- Monthly security audit
+
+## Rollback Criteria
+
+Trigger immediate rollback if:
+
+1. Error rate > 5% for 5 minutes
+2. API response time p95 > 5s
+3. Critical security vulnerability discovered
+4. Database connection failures > 10%
+5. Authentication service unavailable
+6. Data corruption detected
+
+## Test Environment Access
+
+**Staging Environment:**
+- URL: `https://staging.my-clients.app`
+- Database: Cloud SQL staging instance
+- Test accounts: Available in Secret Manager
+
+**Testing Tools:**
+- Postman collection for API testing
+- Playwright scripts for E2E testing
+- Artillery configuration for load testing
+- Security scan scripts
+
+## Additional Documentation
+
+- [Test Case Repository](./tests/test-cases.md)
+- [Performance Baseline Report](./reports/performance-baseline.md)
+- [Security Scan Results](./reports/security-scan.md)
+- [Load Test Results](./reports/load-test-results.md)
+- [Incident Postmortem Template](./templates/postmortem.md)

@@ -1,6 +1,6 @@
 {
-  "title": "Api Documentation",
-  "description": "API documentation and specifications",
+  "title": "Api",
+  "description": "A API documentation for the **My Clients** project.",
   "icon": "Globe",
   "pages": ["index", "...(generated)"]
 }

@@ -2,10 +2,15 @@
   "title": "Documentation",
   "pages": [
     "index",
-    "---Guides---",
-    "quick-start",
-    "diagramming",
-    "---Api---",
-    "api"
+    "---Architecture---",
+    "glossary",
+    "architecture",
+    "agreement",
+    "api",
+    "---Process---",
+    "support",
+    "process",
+    "---Guidelines---",
+    "guidelines"
   ]
 }

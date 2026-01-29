@@ -1,0 +1,11 @@
+{
+  "title": "Services",
+  "description": "C4 Services documentation",
+  "pages": [
+    "app-client",
+    "app-staff",
+    "---Backend---",
+    "module-client",
+    "module-service-catalog"
+  ]
+}

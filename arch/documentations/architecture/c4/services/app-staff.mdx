@@ -1,0 +1,36 @@
+---
+title: Staff Portal SPA
+description: Admin and Master Portal Frontend Application
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    subgraph StaffPortal [Staff Portal SPA]
+        subgraph Frontend [Frontend Layer]
+            StaffApp[⚛️ Vue 3, Vite<br/>Admin & Master Portal<br/>Calendar • Clients • Services<br/>Analytics • Staff Management]
+        end
+    end
+
+    subgraph InternalServices [Internal Services]
+        Backend[<a href='../c3'>🏗️ Monolith PHP Backend<br/>Business logic & data</a>]
+    end
+
+    subgraph ExternalServices [External Services]
+        CDN[📦 CDN<br/>Static assets & images]
+    end
+
+    StaffApp --> Backend
+    StaffApp --> CDN
+
+    classDef staffPortalStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef backendStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef externalStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+
+    class StaffApp staffPortalStyle
+    class Backend backendStyle
+    class CDN externalStyle
+
+" />

@@ -1,0 +1,69 @@
+---
+title: Service Catalog Module
+description: Component details for the Service Catalog module in My Clients
+index: true
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    API[🔌 API Layer<br/>Service Endpoints]
+    ServiceCatalog[💅 Service Catalog Service<br/>Business Logic]
+    ServiceRepo[(🗄️ Service Repository<br/>PostgreSQL)]
+    ScheduleModule[📅 Schedule Module]
+    AnalyticsModule[📊 Analytics Module]
+
+    API --> ServiceCatalog
+    ServiceCatalog --> ServiceRepo
+    ServiceCatalog --> ScheduleModule
+    ServiceCatalog --> AnalyticsModule
+
+    classDef apiStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef moduleStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef dbStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+
+    class API apiStyle
+    class ServiceCatalog,ScheduleModule,AnalyticsModule moduleStyle
+    class ServiceRepo dbStyle
+"
+/>
+
+# 💅 Service Catalog Module
+
+This module manages all service offerings and pricing for the My Clients platform.
+
+## Responsibilities
+
+- Manage service definitions (name, description, duration)
+- Set and update service pricing
+- Support service packages and bundles
+- Track service popularity and usage
+- Provide service data to scheduling and analytics modules
+
+## Key Components
+
+- **Service Repository:** Handles CRUD operations for service data in the database
+- **Service Catalog Service:** Business logic for managing services, pricing, and packages
+- **API Endpoints:** REST endpoints for service management (create, update, list, etc.)
+- **Integration:** Interacts with Schedule and Analytics modules
+
+## Data Model
+
+- Service ID
+- Name, description, duration
+- Price (with support for dynamic pricing)
+- Package/bundle info
+- Popularity metrics
+
+## Interactions
+
+- **Schedule Module:** Provides available services for appointment booking
+- **Analytics Module:** Supplies service data for performance and revenue analysis
+
+## Technologies
+
+- PHP (Symfony)
+- PostgreSQL (service data storage)
+- REST API

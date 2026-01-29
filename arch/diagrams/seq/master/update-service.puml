@@ -1,0 +1,22 @@
+@startuml
+
+actor NailMaster
+participant "Staff Portal" as StaffPortal
+participant "Backend API" as Backend
+
+NailMaster -> StaffPortal: Access Service Catalog
+StaffPortal -> Backend: Request My Services
+Backend -> StaffPortal: Display Services
+StaffPortal -> NailMaster: Show Service List
+
+NailMaster -> StaffPortal: Update Service Price
+StaffPortal -> Backend: Update Service Request
+Backend -> Backend: Update Service Record
+note right of Backend
+  Price updated successfully
+  New price effective immediately
+end note
+Backend -> StaffPortal: 200 Success
+StaffPortal -> NailMaster: Service Updated
+
+@enduml

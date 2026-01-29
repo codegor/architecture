@@ -1,0 +1,12 @@
+{
+  "title": "Architecture",
+  "description": "The architecture of the **My Clients**.",
+  "pages": [
+    "adr",
+    "c4",
+    "erd",
+    "solution-design",
+    "seq",
+    "strategy"
+  ]
+}

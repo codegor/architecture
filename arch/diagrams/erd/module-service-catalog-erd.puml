@@ -1,0 +1,58 @@
+@startuml
+!theme plain
+
+package "Service Catalog Module" as ServiceModule {
+    entity Service {
+        id : UUID
+        name : String
+        description : Text
+        duration_minutes : Integer
+        base_price : Decimal
+        category : ServiceCategory
+        popularity_score : Integer
+        is_active : Boolean
+        created_at : Timestamp
+    }
+
+    entity ServicePackage {
+        id : UUID
+        name : String
+        description : Text
+        total_price : Decimal
+        discount_percentage : Decimal
+        is_active : Boolean
+        created_at : Timestamp
+    }
+
+    entity PackageService {
+        id : UUID
+        package_id : UUID
+        service_id : UUID
+        quantity : Integer
+    }
+
+    entity ServicePricing {
+        id : UUID
+        service_id : UUID
+        nail_master_id : UUID
+        custom_price : Decimal
+        effective_from : Date
+        effective_to : Date
+    }
+
+    entity SubscriptionModel {
+        id : UUID
+        name : String
+        description : Text
+        monthly_fee : Decimal
+        services_per_month : Integer
+        duration_months : Integer
+        is_active : Boolean
+    }
+
+    ' Relationships
+    Service::id ||--o{ PackageService::service_id : "1:N"
+    ServicePackage::id ||--o{ PackageService::package_id : "1:N"
+    Service::id ||--o{ ServicePricing::service_id : "1:N"
+}
+@enduml

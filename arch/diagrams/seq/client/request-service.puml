@@ -1,0 +1,30 @@
+@startuml
+
+actor Client
+participant "Client Portal" as ClientPortal
+participant "Backend API" as Backend
+participant "Notification Service" as NotificationService
+
+Client -> ClientPortal: Login to Account
+ClientPortal -> Backend: Authenticate Client
+Backend -> ClientPortal: 200 Authenticated
+
+Client -> ClientPortal: Browse Services & Availability
+ClientPortal -> Backend: Get Available Time Slots
+Backend -> ClientPortal: Return Available Services & Times
+ClientPortal -> Client: Show Calendar & Service List
+
+Client -> ClientPortal: Select Service & Time
+ClientPortal -> Backend: Book Appointment Request
+Backend -> Backend: Validate Slot Availability
+Backend -> Backend: Create Appointment Record
+Backend -> ClientPortal: 201 Appointment Booked
+note right of Backend
+  Appointment confirmed
+  Sending notifications
+end note
+Backend -> NotificationService: Send Booking Confirmation
+NotificationService -> Client: Email/SMS Confirmation
+ClientPortal -> Client: Appointment Confirmed
+
+@enduml

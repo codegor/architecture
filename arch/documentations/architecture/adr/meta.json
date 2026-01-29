@@ -1,0 +1,8 @@
+{
+  "title": "ADRs",
+  "description": "The ADRs of the **My Clients**.",
+  "pages": [
+    "adr001",
+    "adr002"
+  ]
+}

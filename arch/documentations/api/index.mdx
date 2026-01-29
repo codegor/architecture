@@ -1,22 +1,63 @@
 ---
-title: Api Documentation
-description: API documentation and specifications.
+title: My Clients API Documentation
+description: Complete REST API reference for the My Clients nail master management platform. Includes client management, service catalog, appointment scheduling, and business analytics endpoints.
 ---
 
-## Features
+# My Clients API Documentation
 
-The official OpenAPI integration supports:
+## Overview
 
-- Basic API endpoint information
-- Interactive API playground
-- Example code to send request (in different programming languages)
-- Response samples and TypeScript definitions
-- Request parameters and body generated from schemas
+The **My Clients API** is a comprehensive REST API built on **OpenAPI 3.1.1** that powers the My Clients platform. It provides developers and integrations with full access to manage clients, services, appointments, and business analytics for nail masters and beauty professionals.
 
-> Only OpenAPI 3.0 and 3.1 are supported.
+## API Features
 
-Generate docs with the script:
+The My Clients API supports:
 
-```bash
-pnpm build:openapi
+- **Authentication & Authorization** - JWT Bearer tokens and API key authentication for secure access
+- **Client Management** - Create, retrieve, update, and delete client profiles with preferences and visit history
+- **Service Catalog** - Manage service offerings with dynamic pricing, durations, and categories
+- **Appointment Scheduling** - Schedule, reschedule, and cancel appointments with status tracking
+- **Business Analytics** - Access real-time metrics including revenue, client statistics, and performance analytics
+- **Pagination & Filtering** - Efficient data retrieval with limit/offset pagination and search capabilities
+- **Error Handling** - Standardized error responses following RFC 7807 problem statement format
+- **Multi-Format Support** - JSON request/response with extensible schema definitions
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/signup` - Create a new account
+- `POST /auth/login` - Authenticate and receive token
+- `GET /auth/profile` - Get current user information
+
+### Clients
+- `GET /clients` - List all clients with search and pagination
+- `POST /clients` - Create a new client
+- `GET /clients/{clientId}` - Get specific client details
+- `PUT /clients/{clientId}` - Update client information
+- `DELETE /clients/{clientId}` - Delete a client
+
+### Services
+- `GET /services` - List all services
+- `POST /services` - Create a new service
+- `GET /services/{serviceId}` - Get service details
+- `PUT /services/{serviceId}` - Update service information
+- `DELETE /services/{serviceId}` - Delete a service
+
+### Appointments
+- `GET /appointments` - List appointments with date and status filtering
+- `POST /appointments` - Schedule a new appointment
+- `GET /appointments/{appointmentId}` - Get appointment details
+- `PUT /appointments/{appointmentId}` - Update or reschedule an appointment
+- `DELETE /appointments/{appointmentId}` - Cancel an appointment
+
+### Analytics
+- `GET /analytics/dashboard` - Get monthly business metrics and KPIs
+- `GET /analytics/revenue` - Get revenue trends and income analysis
+- `GET /analytics/clients` - Get client statistics and engagement metrics
+
+## Getting Started
+
+### Base URL
+```
+https://api.myclients.com
 ```

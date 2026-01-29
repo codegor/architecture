@@ -1,0 +1,51 @@
+---
+title: ADR 002 - Framework Choice
+description: Select Laravel Framework as Main PHP Framework
+---
+
+# 📋 ADR002: Select Laravel Framework as Main PHP Framework
+
+## ✅ Status
+Accepted
+
+## 📖 Context
+The Nail Master Management System requires a robust PHP framework to handle backend development efficiently. The framework must provide excellent tooling for database management, authentication, API development, and maintainability while ensuring the team can develop features rapidly.
+
+## 🎯 Decision
+We will adopt **Laravel** as the primary PHP framework for the backend development:
+- **🏗️ Framework**: Laravel (latest LTS version)
+- **📦 Package Manager**: Composer for dependency management
+- **🗄️ ORM**: Eloquent ORM for database interactions
+- **🔐 Authentication**: Laravel Sanctum for API authentication
+- **⚡ Queue System**: Laravel Queue for background job processing
+- **📧 Notifications**: Laravel built-in notification system
+
+## 💡 Rationale
+1. **⚡ Developer Productivity** - Laravel's expressive syntax and built-in features accelerate development
+2. **🔧 Rich Ecosystem** - Extensive packages and tools available through Composer and Laravel ecosystem
+3. **📚 Excellent Documentation** - Comprehensive, well-written documentation reduces learning curve
+4. **🛡️ Security Features** - Built-in protection against SQL injection, XSS, CSRF attacks
+5. **🔄 Migration System** - Version control for database schema changes
+6. **🌐 Community Support** - Large, active community with abundant resources and packages
+7. **🧪 Testing Support** - Built-in testing capabilities with PHPUnit integration
+
+## 📊 Consequences
+
+### ✨ Positive
+- Rapid API development with built-in routing and controllers
+- Standardized project structure improves code maintainability
+- Eloquent ORM simplifies database operations and relationships
+- Built-in authentication and authorization reduce security implementation time
+- Laravel Artisan CLI automates repetitive tasks
+- Easy integration with Vue.js frontend (aligned with ADR001)
+
+### ⚠️ Negative
+- Framework overhead may impact performance for very high-traffic scenarios
+- Learning curve for team members unfamiliar with Laravel conventions
+- Framework updates require careful version management
+- Some "magic" features may obscure underlying implementation details
+
+## 🔀 Alternatives Considered
+1. **Symfony** - Rejected: More complex configuration, steeper learning curve for team
+2. **CodeIgniter** - Rejected: Less modern features, smaller ecosystem compared to Laravel
+3. **Vanilla PHP** - Rejected: Would require building common features from scratch, slowing development

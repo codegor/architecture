@@ -1,0 +1,63 @@
+---
+title: Level 3 - Component
+description: Component-level view of the Monolith Backend internal structure
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    %% API Layer
+    API[🔌 API Layer<br/>REST endpoints]
+
+    %% Backend Modules
+    AuthModule[🔐 Authentication & Authorization<br/>User sessions, roles, permissions]
+    ClientModule[<a href='services/module-client'>👥 Client Management<br/>Client profiles, history, preferences</a>]
+    ScheduleModule[📅 Schedule Management<br/>Appointments, availability, bookings]
+    ServiceModule[<a href='services/module-service-catalog'>💅 Service Catalog<br/>Services, pricing, packages</a>]
+    AnalyticsModule[📊 Analytics & Reporting<br/>Revenue, metrics, insights]
+    NotificationModule[🔔 Notifications<br/>Reminders, alerts orchestration]
+
+    %% API to Modules
+    API --> AuthModule
+    API --> ClientModule
+    API --> ScheduleModule
+    API --> ServiceModule
+    API --> AnalyticsModule
+
+    %% Backend Module Interactions
+    ScheduleModule --> ClientModule
+    ScheduleModule --> ServiceModule
+    ScheduleModule --> NotificationModule
+    AnalyticsModule --> ClientModule
+    AnalyticsModule --> ScheduleModule
+    AnalyticsModule --> ServiceModule
+
+    %% External Systems
+    EmailService[📧 Email Service<br/>SMTP Provider]
+    SMSService[📱 SMS Service<br/>SMS Provider]
+    Database[(🗄️ Database<br/>PostgreSQL)]
+
+    %% Modules to External
+    NotificationModule --> EmailService
+    NotificationModule --> SMSService
+    AuthModule --> Database
+    ClientModule --> Database
+    ScheduleModule --> Database
+    ServiceModule --> Database
+    AnalyticsModule --> Database
+
+    %% Styling
+    classDef apiStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef moduleStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef externalStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    classDef dbStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+
+    class API apiStyle
+    class AuthModule,ClientModule,ScheduleModule,ServiceModule,AnalyticsModule,NotificationModule moduleStyle
+    class EmailService,SMSService externalStyle
+    class Database dbStyle
+
+"
+/>

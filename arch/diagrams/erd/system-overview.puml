@@ -1,0 +1,26 @@
+@startuml
+!theme plain
+
+!include module-client-erd.puml
+!include module-service-catalog-erd.puml
+
+' Cross-module relationships
+' Appointments link to Services
+ClientModule.Appointment::service_id }o--|| ServiceModule.Service::id : "references"
+
+' Service History links to Services
+ClientModule.ClientServiceHistory::service_id }o--|| ServiceModule.Service::id : "tracks"
+
+note right of ClientModule.Appointment
+  Appointments connect clients
+  to services they book
+end note
+
+note left of ServiceModule.Service
+  Services are the core offerings
+  that clients can book
+end note
+
+' Cross-service relationships - Product to Billing
+BillingService.Order::product_id ||--o{ ProductService.Product::id
+@enduml

@@ -1,0 +1,308 @@
+---
+title: My Clients - Google Cloud Platform Deployment Strategy
+description: Solution design for deploying the nail master management system to Google Cloud Platform
+---
+
+# My Clients - Google Cloud Platform Deployment
+
+## Purpose
+Deploy the My Clients nail master management platform to Google Cloud Platform (GCP) to provide scalable, reliable, and cost-effective infrastructure for serving independent nail technicians and small salons across multiple regions.
+
+## Owners
+- **Solution Architect**: Architecture Team
+- **DevOps Lead**: Platform Engineering Team
+- **Product Owner**: My Clients Product Team
+
+## Why Google Cloud Platform?
+
+### Technical Advantages
+
+| Feature | GCP Benefit | Impact on My Clients |
+|---------|-------------|---------------------|
+| **Cloud Run** | Serverless containers with auto-scaling | Perfect for variable salon booking traffic patterns |
+| **Cloud SQL** | Managed PostgreSQL with automatic backups | Reliable client and appointment data storage |
+| **Firebase Auth** | Built-in authentication & user management | Simplified nail master account management |
+| **Cloud Storage** | Cost-effective object storage | Store client photos, service images, portfolio |
+| **Cloud Scheduler** | Managed cron jobs | Automated appointment reminders and analytics |
+| **BigQuery** | Serverless analytics | Process monthly income reports and client insights |
+| **Cloud CDN** | Global content delivery | Fast calendar UI loading worldwide |
+| **Secret Manager** | Secure credential storage | Protect API keys and database credentials |
+
+### Business Advantages
+
+1. **Cost Efficiency**
+   - Pay only for actual usage (serverless pricing)
+   - No upfront infrastructure investment
+   - Free tier supports initial user growth
+   - Predictable monthly costs for budgeting
+
+2. **Developer Productivity**
+   - Managed services reduce operational overhead
+   - Focus on features, not infrastructure
+   - Faster deployment cycles with Cloud Build
+   - Integrated monitoring with Cloud Logging
+
+3. **Scalability**
+   - Auto-scale during peak booking hours
+   - Handle growth from 100 to 100,000 users seamlessly
+   - Regional expansion without infrastructure changes
+   - Database read replicas for performance
+
+4. **Reliability**
+   - 99.95% SLA for Cloud Run services
+   - Automated backups and disaster recovery
+   - Multi-region deployment options
+   - Built-in health checks and auto-healing
+
+## Architecture Overview
+
+### High-Level Architecture
+<Diagram lang="plantuml" path="cloud-flow.puml" alt="GCP Architecture Diagram" />
+
+### Request Processing Flow
+<Diagram lang="plantuml" path="processing-flow.puml" alt="Request Processing Flow" />
+
+## Scope
+
+### In Scope
+- [ ] Deploy frontend (Vue.js SPA) to Cloud Run
+- [ ] Deploy backend API (PHP) to Cloud Run with auto-scaling
+- [ ] Migrate database to Cloud SQL (PostgreSQL)
+- [ ] Configure Firebase Authentication for nail masters
+- [ ] Set up Cloud Storage for client photos and service images
+- [ ] Implement Cloud Scheduler for appointment reminders
+- [ ] Configure Cloud CDN for static assets
+- [ ] Set up Cloud Build CI/CD pipeline
+- [ ] Implement Cloud Logging and Monitoring
+- [ ] Configure Secret Manager for credentials
+- [ ] Set up BigQuery for analytics processing
+- [ ] Deploy in us-central1 region initially
+
+### Out of Scope
+- [ ] Multi-region active-active deployment (Phase 2)
+- [ ] Custom domain SSL certificates (handled separately)
+- [ ] Third-party payment gateway integration
+- [ ] Mobile app deployment (separate project)
+- [ ] Email service provider integration (use SendGrid)
+- [ ] Advanced AI features for service recommendations
+
+## Deployment Strategy
+
+### Phase 1: Foundation (Week 1-2)
+1. Set up GCP project and billing
+2. Configure VPC network and firewall rules
+3. Create Cloud SQL instance (PostgreSQL 15)
+4. Set up Firebase project for authentication
+5. Configure Secret Manager for credentials
+
+### Phase 2: Core Services (Week 3-4)
+1. Deploy backend API (PHP) to Cloud Run
+2. Deploy frontend (Vue.js) to Cloud Run
+3. Configure Cloud Storage buckets
+4. Set up Cloud CDN
+5. Implement health checks and monitoring
+
+### Phase 3: Automation (Week 5)
+1. Configure Cloud Scheduler for reminders
+2. Set up Cloud Build CI/CD
+3. Implement automated backups
+4. Configure log aggregation
+5. Set up alerting policies
+
+### Phase 4: Analytics (Week 6)
+1. Deploy BigQuery datasets
+2. Create data pipeline from Cloud SQL
+3. Build analytics dashboards
+4. Implement monthly reporting automation
+
+## Technical Implementation
+
+### Cloud Run Configuration
+
+**Frontend Service (Vue.js):**
+```yaml
+CPU: 1 vCPU
+Memory: 512Mi
+Min instances: 0
+Max instances: 10
+Request timeout: 60s
+Concurrency: 80
+Base Image: node:18-alpine or nginx
+```
+
+**Backend API Service (PHP):**
+```yaml
+CPU: 2 vCPU
+Memory: 1Gi
+Min instances: 1
+Max instances: 100
+Request timeout: 300s
+Concurrency: 80
+Base Image: php:8.2-fpm or php:8.2-apache
+```
+
+### Cloud SQL Configuration
+
+```yaml
+Instance: db-g1-small (dev), db-n1-standard-2 (prod)
+Storage: 20GB SSD (auto-resize enabled)
+Backups: Daily automated backups, 7-day retention
+High Availability: Enabled for production
+Connection: Cloud SQL Proxy from Cloud Run
+PDO/MySQLi: PHP database drivers enabled
+```
+
+### Cloud Storage Buckets
+
+1. **my-clients-user-uploads** - Client photos, service images
+2. **my-clients-static-assets** - UI assets, logos, Vue.js build artifacts
+3. **my-clients-backups** - Database exports, disaster recovery
+
+## Risk Management
+
+### Technical Risks
+
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Cloud Run cold starts delay requests | Medium | Medium | Set min instances to 1 for API service, use PHP opcache |
+| Cloud SQL connection limits exceeded | High | Low | Implement PDO connection pooling (PgBouncer) |
+| Storage costs exceed budget | Medium | Low | Implement lifecycle policies, compress images |
+| PHP memory exhaustion under load | Medium | Low | Configure memory limits, optimize code, use caching |
+| Vue.js bundle size impacts TTI | Medium | Low | Tree-shaking, code splitting, lazy loading |
+| Database migration data loss | High | Very Low | Full backup before migration, validation scripts |
+
+### Stability Concerns
+
+- [ ] Monitor Cloud Run instance crashes
+- [ ] Set up alerts for Cloud SQL high CPU usage
+- [ ] Track Cloud Storage bucket size growth
+- [ ] Monitor API response times and error rates
+- [ ] Alert on authentication service failures
+- [ ] Monitor PHP error logs and exceptions
+
+## Cost Estimation
+
+### Monthly Cost Breakdown (1000 active nail masters)
+
+| Service | Estimated Cost | Notes |
+|---------|---------------|-------|
+| Cloud Run (Frontend) | $15-30 | Vue.js SPA, serverless pricing, low traffic |
+| Cloud Run (Backend) | $50-100 | PHP API, higher usage, min 1 instance |
+| Cloud SQL | $100-150 | db-n1-standard-2 + storage |
+| Cloud Storage | $10-20 | 100GB user uploads |
+| Cloud CDN | $5-10 | Low egress traffic |
+| Firebase Auth | $0 | Within free tier limits |
+| Cloud Scheduler | $0.10 | 10 jobs |
+| Secret Manager | $0.50 | 10 secrets |
+| Cloud Logging | $10-20 | Standard retention |
+| **Total** | **$190-330/month** | Production environment |
+
+## Monitoring & Observability
+
+### Key Metrics
+
+**Application Performance:**
+- API endpoint response times (p50, p95, p99)
+- Frontend Time to Interactive (TTI)
+- PHP execution time and memory usage
+- Database query performance
+- Error rates by service
+
+**Business Metrics:**
+- Active nail master count
+- Daily appointment creations
+- Calendar view interactions
+- Service catalog updates
+
+**Infrastructure:**
+- Cloud Run instance count and scaling events
+- Cloud SQL CPU and memory utilization
+- Storage bucket size and growth rate
+- CDN hit/miss ratio
+- PHP-FPM process pool utilization
+
+### Alerting Rules
+
+1. API error rate > 5% for 5 minutes
+2. Database CPU > 80% for 10 minutes
+3. Cloud Run instance scaling failures
+4. Authentication service downtime
+5. Backup job failures
+6. PHP fatal errors detected in logs
+
+## Additional Requirements
+
+### Backend (PHP)
+- [ ] Implement Cloud SQL connection pooling with PDO
+- [ ] Configure Cloud Run service accounts with least privilege
+- [ ] Set up Cloud Armor for DDoS protection
+- [ ] Implement rate limiting per nail master account (use Redis or in-memory cache)
+- [ ] Configure CORS headers for Vue.js frontend domain
+- [ ] Set up Cloud Tasks for background jobs
+- [ ] Enable PHP opcache for performance optimization
+- [ ] Implement structured logging (JSON format)
+- [ ] Use dependency management (Composer)
+
+### Frontend (Vue.js)
+- [ ] Optimize bundle size (tree-shaking, code splitting)
+- [ ] Implement lazy loading for calendar components
+- [ ] Configure Cloud CDN caching headers (cache-control)
+- [ ] Set up error tracking with Cloud Error Reporting
+- [ ] Implement performance monitoring (Web Vitals)
+- [ ] Enable service worker for offline calendar access
+- [ ] Use production build with minification
+- [ ] Configure API base URL from environment variables
+
+### DevOps
+- [ ] Create Cloud Build triggers for main branch
+- [ ] Set up staging and production environments
+- [ ] Implement blue-green deployment strategy
+- [ ] Configure automated rollback on health check failures
+- [ ] Create runbooks for common incidents
+- [ ] Document Docker container setup for PHP and Vue.js
+
+### Security
+- [ ] Enable VPC Service Controls
+- [ ] Configure IAM roles and permissions
+- [ ] Set up Cloud KMS for encryption keys
+- [ ] Implement audit logging for compliance
+- [ ] Regular security scanning with Cloud Security Scanner
+- [ ] Validate PHP dependencies for vulnerabilities (Composer audit)
+- [ ] Implement CSRF protection in PHP
+- [ ] Sanitize user inputs and prepared statements
+
+## Migration Plan
+
+### Pre-Migration
+1. Audit current infrastructure and dependencies
+2. Create GCP project and configure billing alerts
+3. Set up staging environment for testing
+4. Perform load testing on Cloud Run with PHP API
+5. Test Vue.js SPA deployment and bundle size
+6. Create rollback plan and data recovery procedures
+
+### Migration Day
+1. Announce maintenance window to users
+2. Create final database backup
+3. Export data from current hosting
+4. Import data to Cloud SQL
+5. Deploy services to Cloud Run (PHP API + Vue.js frontend)
+6. Update DNS records
+7. Verify all functionality
+8. Monitor for issues
+
+### Post-Migration
+1. Monitor performance for 48 hours
+2. Validate data integrity
+3. Collect user feedback
+4. Optimize based on real traffic patterns
+5. Document lessons learned
+
+## Additional Documentation
+- [GCP Architecture Diagram](./diagrams/gcp-architecture.png)
+- [Database Migration Runbook](./runbooks/db-migration.md)
+- [PHP Application Setup](./guides/php-setup.md)
+- [Vue.js Deployment Guide](./guides/vue-deployment.md)
+- [Cost Optimization Guide](./guides/cost-optimization.md)
+- [Incident Response Playbook](./playbooks/incident-response.md)
+- [CI/CD Pipeline Documentation](./guides/cicd-pipeline.md)

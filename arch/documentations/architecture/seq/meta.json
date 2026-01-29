@@ -1,0 +1,9 @@
+{
+  "title": "Sequence Diagrams",
+  "description": "Sequence Overview",
+  "pages": [
+    "index",
+    "client",
+    "master"
+  ]
+}

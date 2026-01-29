@@ -1,0 +1,8 @@
+{
+  "title": "Client Sequence",
+  "description": "Client Sequence Overview",
+  "pages": [
+    "create",
+    "request-service"
+  ]
+}

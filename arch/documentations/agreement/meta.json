@@ -1,0 +1,9 @@
+{
+  "title": "Agreement",
+  "description": "A Agreement used in the **My Clients** project.",
+  "pages": [
+    "php",
+    "js",
+    "common"
+  ]
+}

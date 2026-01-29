@@ -1,0 +1,100 @@
+---
+title: Actors
+description: User roles and personas in the My Clients system
+---
+
+# Actors
+
+| **Actor** | **Icon** | **Description** | **Examples of Actions** |
+|------------|-----------|-----------------|--------------------------|
+| **Salon Admin** | 👤 | Owner or Business Manager with full administrative access to the system. | Manages staff, configures business settings, views revenue analytics, oversees all operations, manages service catalog and pricing. |
+| **Nail Master** | 👤 | Service provider who manages their own schedule and client interactions. | Manages personal schedule, books appointments, updates service status, tracks availability, views assigned clients, delivers services. |
+| **Salon Client** | 👤 | End customer who books appointments and receives nail services. | Books appointments, views appointment history, browses available services and prices, manages personal profile, receives confirmations and reminders. |
+
+---
+
+## 👤 Salon Admin
+
+**Definition:** The nail salon owner or business manager responsible for overall salon operations and staff management.
+
+**Primary Responsibilities:**
+- Onboard and manage multiple nail masters on the platform
+- Configure business settings, salon name, and contact information
+- Monitor and approve service pricing across all nail masters
+- View comprehensive business analytics and revenue reports
+- Track performance metrics for each nail master
+- Manage salon policies and appointment rules
+- Access financial reporting and growth insights
+
+**Access Level:** Full system access with administrative privileges
+
+**Common Tasks:**
+- Review monthly income dashboard for the entire salon
+- Analyze which nail masters are most profitable
+- Monitor client acquisition and retention trends
+- Set salon-wide policies for cancellations and no-shows
+
+---
+
+## 👤 Nail Master
+
+**Definition:** Independent service provider (nail technician) who manages their own schedule, clients, and services within the salon.
+
+**Primary Responsibilities:**
+- Create and manage personal service offerings (gel nails, acrylics, nail art, etc.)
+- Set and update individual service pricing
+- Manage personal availability and block time for breaks
+- Create and confirm appointments with clients
+- Update appointment status (completed, cancelled, no-show)
+- Build and maintain relationships with regular clients
+- Track personal income and appointment statistics
+
+**Access Level:** Limited access to own schedule, clients, services, and personal analytics
+
+**Common Tasks:**
+- View daily/weekly calendar and manage appointments
+- Add new clients and maintain client notes
+- Create service packages or special offers
+- Track personal revenue and busiest time periods
+- Receive appointment reminders and client confirmations
+
+---
+
+## 👤 Salon Client
+
+**Definition:** End customer who books appointments for nail services and receives service from nail masters.
+
+**Primary Responsibilities:**
+- Browse available nail services and pricing
+- View appointment availability and book time slots
+- Receive appointment confirmations and reminders
+- Manage personal appointment history and preferences
+- Update profile information and contact details
+
+**Access Level:** Read-only access to service catalog and own appointment data; booking functionality only
+
+**Common Tasks:**
+- Search and view available appointment times
+- Book appointments with preferred nail master
+- Receive email/SMS reminders before appointments
+- View past appointment history and service details
+- Save preferred services and service preferences
+
+---
+
+## Actor Interactions
+
+### Salon Admin
+- **Primary Portal**: Staff Portal (Admin & Master Portal)
+- **Key Responsibilities**: Business management, staff oversight, financial analytics, system configuration
+- **Access Level**: Full system access including all modules and analytics
+
+### Nail Master
+- **Primary Portal**: Staff Portal (Admin & Master Portal)
+- **Key Responsibilities**: Personal schedule management, client service delivery, appointment handling
+- **Access Level**: Limited to own schedule, assigned clients, and service catalog
+
+### Salon Client
+- **Primary Portal**: Client Portal
+- **Key Responsibilities**: Self-service appointment booking, profile management, service browsing
+- **Access Level**: Personal appointments, history, and profile data only

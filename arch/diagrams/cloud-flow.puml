@@ -1,0 +1,91 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+
+title My Clients - Google Cloud Platform Architecture
+
+actor "Nail Master" as user
+actor "Client" as client
+
+package "Frontend Layer" {
+  component [Cloud Run\nFrontend\n(Vue.js SPA)] as frontend
+  component [Cloud CDN] as cdn
+}
+
+package "Application Layer" {
+  component [Cloud Run\nBackend API\n(PHP REST API)] as api
+  component [Cloud Scheduler\n(Cron Jobs)] as scheduler
+  component [Cloud Tasks\n(Job Queue)] as tasks
+}
+
+package "Data Layer" {
+  database [Cloud SQL\nPostgreSQL\n(Clients & Appointments)] as db
+  storage [Cloud Storage\n(Photos & Assets)] as storage
+  component [BigQuery\n(Analytics)] as analytics
+}
+
+package "Security & Identity" {
+  component [Firebase Auth] as auth
+  component [Secret Manager] as secrets
+  component [Cloud Armor\n(DDoS Protection)] as armor
+}
+
+' User interactions
+user --> cdn : Browse Calendar
+cdn --> frontend : Serve Vue.js SPA
+frontend --> auth : Login
+auth --> frontend : JWT Token
+
+' API flow
+user --> armor : API Requests
+armor --> api : Validated Traffic
+api --> db : CRUD Operations
+api --> storage : Upload Photos
+api --> auth : Verify Token
+api --> secrets : Get Credentials
+
+' Background jobs
+scheduler --> api : Trigger Reminders
+api --> tasks : Queue Background Jobs
+
+' Analytics
+db --> analytics : Data Pipeline
+analytics --> api : Monthly Reports
+
+' Client interactions
+client --> frontend : View Appointment
+
+note right of frontend
+  **Stack:** Vue.js 3
+  **Auto-scaling:** 0-10 instances
+  **Cold start:** <2s
+  **Memory:** 512Mi
+  **Region:** us-central1
+end note
+
+note right of api
+  **Stack:** PHP 8.2
+  **Auto-scaling:** 1-100 instances
+  **Connection pooling:** PDO enabled
+  **Memory:** 1Gi
+  **Timeout:** 300s
+  **Opcache:** Enabled
+end note
+
+note right of db
+  **Backups:** Daily automated
+  **HA:** Enabled (production)
+  **Encryption:** SSL/TLS
+  **Instance:** db-n1-standard-2
+  **Drivers:** PDO/MySQLi
+end note
+
+note bottom of storage
+  **Buckets:**
+  • my-clients-user-uploads
+  • my-clients-static-assets (Vue build)
+  • my-clients-backups
+end note
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+!theme plain
+
+package "Client Management Module" as ClientModule {
+    entity Client {
+        id : UUID
+        name : String
+        email : String
+        phone : String
+        notes : Text
+        preferences : JSON
+        created_at : Timestamp
+    }
+
+    entity Appointment {
+        id : UUID
+        client_id : UUID
+        service_id : UUID
+        nail_master_id : UUID
+        scheduled_date : Date
+        scheduled_time : Time
+        duration_minutes : Integer
+        total_price : Decimal
+        status : AppointmentStatus
+        client_notes : Text
+        created_at : Timestamp
+    }
+
+    entity ClientServiceHistory {
+        id : UUID
+        client_id : UUID
+        appointment_id : UUID
+        service_date : Date
+        feedback : Text
+        rating : Integer
+    }
+
+    entity ClientLoyaltyMetrics {
+        id : UUID
+        client_id : UUID
+        total_visits : Integer
+        total_spent : Decimal
+        last_visit_date : Date
+        average_frequency_days : Integer
+    }
+
+    ' Relationships
+    Client::id ||--o{ Appointment::client_id : "1:N"
+    Client::id ||--|| ClientLoyaltyMetrics::client_id : "1:1"
+    Client::id ||--o{ ClientServiceHistory::client_id : "1:N"
+    Appointment::id ||--|| ClientServiceHistory::appointment_id : "1:1"
+}
+@enduml

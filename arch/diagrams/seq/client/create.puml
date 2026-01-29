@@ -1,0 +1,24 @@
+@startuml
+
+actor Anonymous
+participant "Client Portal" as ClientPortal
+participant "Backend API" as Backend
+participant "Notification Service" as NotificationService
+
+Anonymous -> ClientPortal: Access Registration Page
+ClientPortal -> Anonymous: Show Registration Form
+
+Anonymous -> ClientPortal: Enter Email & Phone
+ClientPortal -> Backend: Create Client Account Request
+Backend -> Backend: Validate Email/Phone
+Backend -> Backend: Create Client Record
+Backend -> ClientPortal: 201 Client Created
+note right of Backend
+  New client registered
+  Ready to book appointments
+end note
+Backend -> NotificationService: Send Welcome Email
+NotificationService -> Anonymous: Welcome Email
+ClientPortal -> Anonymous: Registration Successful
+
+@enduml

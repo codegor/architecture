@@ -1,52 +1,114 @@
 ---
-title: Introduction
-description: Developer-first documentation with diagrams-as-code and more
-icon: Book
+title: My Clients - Nail Master Management System
+description: A comprehensive client and service management platform for nail masters with integrated calendar, pricing, and analytics
+icon: Users
 ---
 
-# Welcome to Diagramming Guru
+# My Clients - Nail Master Management System
 
-This is a **developer-first** documentation stack that combines:
+## Overview
 
-- **Fumadocs v15** for beautiful, fast MDX documentation
-- **Kroki** for rendering diagrams from code
-- **Mermaid** for inline diagrams with dark/light theme support
-- **React Flow** for zoomable diagram viewing
+**My Clients** is a modern, developer-first platform designed specifically for nail masters and beauty professionals who need to efficiently manage their client base, services, and business operations. This comprehensive system consolidates appointment scheduling, service catalog management, pricing control, and real-time business analytics into a single, intuitive application.
 
-## Features
+The platform addresses a critical gap in the beauty industry by providing specialized tools that go beyond generic calendar applications, offering nail masters a dedicated solution for service-based businesses where pricing varies by service complexity, client retention matters, and performance metrics drive business growth.
 
+## Documentation Structure
 
-### 🚀 Hot Reload in Docker
-The entire stack runs in Docker with hot reload enabled for fast development.
+| Type | What | When to Create | Location | Example |
+|------|------|----------------|----------|---------|
+| **ADR** | High-level architectural decisions + WHY | When choosing architecture approach | `/architecture/adr/` | "Trunk-based development", "Microservices architecture" |
+| **Agreement** | Technical standards and conventions | When selecting specific tools/practices | `/agreements/{lang}/` | "PHPStan level 8 for PHP", "ESLint rules for TypeScript" |
+| **Process** | Workflow - WHO, WHEN, WHAT sequence | When establishing new team process | `/process/{topic}/` | "Duty Process", "Branch Strategy" |
+| **Guideline** | Technical HOW TO instructions | When documenting implementation steps | `/guidelines/{topic}/` | "PHP Tracing Integration", "Go Data Isolation" |
+| **Solution Design** | Feature/project design document | Before implementing major features | `/architecture/{project}/solution-designs/{solution-number}/` | Feature design, System design |
+| **Test Design** | Testing strategy for feature | Together with Solution Design | `/architecture/{project}/solution-designs/{solution-number}/` | Feature test plan, QA strategy |
+| **C4 Diagram** | Architecture visualization (4 levels) | When architecture changes | `/architecture/{project}/c4/` | System Context, Container diagram |
+| **Sequence Diagram** | Step-by-step component interactions | When showing flow between services | `/architecture/{project}/sequence/` | Payment flow, Auth flow |
+| **ERD** | Data structure and relationships | When designing/changing database | `/architecture/{project}/erd/` | Database schema |
+| **OpenAPI** | REST API specification | When creating/modifying API | `/openapi/{project}/{service}/` | API endpoints, schemas |
+| **Strategy** | Architectural strategy documents | For long-term direction | `/architecture/{project}/strategy/` | Modernization approach |
 
-### 🔒 Secure by Default
-- Path traversal protection
-- File size limits
-- Language allowlist
-- No code execution
+## Key Features
 
-### 📦 One-Command Setup
+### 📅 Integrated Calendar Management
 
-```bash
-./scripts/dev.sh
-# or
-pnpm dev
-```
+The heart of **My Clients** is a sophisticated calendar system designed for service-based professionals. Nail masters can:
 
-That's it! Both services (docs + Kroki) start with a single command.
+- Create and manage appointments with detailed service descriptions
+- View daily, weekly, and monthly calendar layouts
+- Set appointment duration based on service type
+- Block availability periods for breaks or personal time
+- Receive client confirmations and reminders
+- Track appointment status (scheduled, completed, cancelled, no-show)
+
+### 💅 Service Catalog with Dynamic Pricing
+
+Every nail master has unique services and pricing structures. The platform enables:
+
+- Create unlimited service offerings (gel nails, acrylics, nail art, repairs, etc.)
+- Set and manage individual service prices
+- Track service descriptions and duration estimates
+- Create service packages and bundle deals
+- Manage subscription models for recurring services
+- Update pricing dynamically based on seasonal demand
+- Monitor service popularity and customer preferences
+
+### 👥 Comprehensive Client Base Management
+
+Building and maintaining client relationships is simplified through:
+
+- Complete client profiles with contact information and preferences
+- Service history and visit frequency tracking
+- Client notes and special requests
+- Loyalty and repeat customer identification
+- Client segmentation by value and engagement level
+- Quick client search and filtering capabilities
+
+### 📊 Business Intelligence & Analytics
+
+Make data-driven decisions with powerful built-in analytics:
+
+- **Monthly Income Dashboard** - Track revenue trends and performance metrics
+- **Client Statistics** - View total client count, new clients, and retention rates
+- **Service Performance** - Identify top-performing services and revenue drivers
+- **Appointment Metrics** - Monitor booking rates, no-shows, and cancellation patterns
+- **Growth Analytics** - Compare month-over-month performance and identify trends
+- **Client Base Insights** - Analyze customer acquisition and lifetime value
+
+## Target Users
+
+**My Clients** is purpose-built for:
+
+- Independent nail technicians managing 50-500+ clients
+- Small nail salons with 2-10 service providers
+- Beauty entrepreneurs looking to professionalize operations
+- Freelance nail artists wanting business management tools
+- Established salons upgrading from manual scheduling systems
+
+## Technical Architecture
+
+Built on modern web technologies, **My Clients** provides:
+
+- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile devices
+- **Real-Time Updates** - Instant calendar synchronization across devices
+- **Secure Authentication** - Role-based access for multi-user salons
+- **Data Persistence** - Reliable cloud storage with automatic backups
+- **API-First Design** - Extensible architecture for third-party integrations
+- **Performance Optimized** - Fast load times and smooth user interactions
+
+## Business Benefits
+
+Implementing **My Clients** delivers measurable value:
+
+- **Increased Efficiency** - Reduce scheduling conflicts and manual admin work
+- **Improved Revenue** - Better pricing control and service upselling opportunities
+- **Enhanced Client Experience** - Professional management and reliable scheduling
+- **Data-Driven Growth** - Understand what's working and optimize operations
+- **Time Savings** - Automate routine tasks and focus on client relationships
+- **Business Insights** - Monthly analytics help identify growth opportunities
 
 ## Getting Started
 
-1. Clone the repository
-2. Run `pnpm dev` to start both services
-3. Visit `http://localhost:3000`
-4. Edit MDX files or diagrams - changes reflect immediately!
+The platform is designed for immediate adoption with minimal setup. Nail masters can start managing clients and services within minutes of registration, gradually leveraging advanced features like custom analytics and multi-provider scheduling.
 
-## Supported Diagram Languages
-
-- **PlantUML** (`puml`, `plantuml`)
-- **Graphviz** (`dot`, `graphviz`)
-- **Mermaid** (inline via `<Mermaid>` or via Kroki)
-- **C4 PlantUML** (`c4plantuml`)
-
-Easily extensible to support more Kroki-compatible formats!
+This documentation suite provides detailed guides on platform features, best practices for salon management, and integration options for scaling your business.

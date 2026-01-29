@@ -1,0 +1,38 @@
+---
+title: Client Portal SPA
+description: Client-facing Portal Frontend Application
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    subgraph ClientPortal [Client Portal SPA]
+        subgraph Frontend [Frontend Layer]
+            ClientApp[⚛️ Vue 3, Vite<br/>Client Portal<br/>My Appointments • History<br/>Services • Profile]
+        end
+    end
+
+    subgraph InternalServices [Internal Services]
+        Backend[<a href='../c3'>🏗️ Monolith PHP Backend<br/>Business logic & data</a>]
+    end
+
+    subgraph ExternalServices [External Services]
+        CDN[📦 CDN<br/>Static assets & images]
+        Analytics[📊 Analytics<br/>Business metrics tracking]
+    end
+
+    ClientApp --> Backend
+    ClientApp --> CDN
+    ClientApp --> Analytics
+
+    classDef clientPortalStyle fill:#f0f4c3,stroke:#827717,stroke-width:2px,color:#000
+    classDef backendStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef externalStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+
+    class ClientApp clientPortalStyle
+    class Backend backendStyle
+    class CDN,Analytics externalStyle
+
+" />

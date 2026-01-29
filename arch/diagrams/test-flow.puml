@@ -1,0 +1,90 @@
+@startuml
+@startwbs
+
+* My Clients GCP Testing Strategy
+
+** Pre-Deployment (Staging)
+*** Infrastructure Tests
+**** Cloud Run deployment validation
+**** Cloud SQL connectivity
+**** Firebase Auth integration
+**** Cloud Storage access
+**** Auto-scaling triggers
+*** Functional Tests
+**** Appointment CRUD operations
+**** Client management flows
+**** Service catalog updates
+**** Calendar view rendering
+**** Analytics dashboard
+*** Performance Tests
+**** Load testing (50-500 users)
+**** API response times
+**** Database query performance
+**** Frontend page load speed
+**** Stress testing
+*** Security Tests
+**** Authentication flows
+**** Authorization checks
+**** SQL injection prevention
+**** XSS protection
+**** Rate limiting
+**** Data encryption validation
+
+** Deployment
+*** Smoke Tests (Critical Path)
+**** Frontend loads
+**** User can login
+**** Create appointment works
+**** API health check passes
+**** Database connected
+*** Monitoring Setup
+**** Cloud Logging enabled
+**** Alerting policies active
+**** Uptime checks running
+**** Error reporting configured
+
+** Post-Deployment (Production)
+*** Monitoring Validation
+**** Verify metrics collection
+**** Test alert triggers
+**** Validate dashboards
+**** Check error grouping
+*** Disaster Recovery Tests
+**** Database backup restore
+**** Failover simulation
+**** Point-in-time recovery
+**** Data integrity validation
+*** Real User Monitoring
+**** Page performance tracking
+**** Error rate monitoring
+**** User flow analytics
+**** Device compatibility
+
+** Continuous Testing
+*** Synthetic Monitoring
+**** 5-minute health checks
+**** Login flow tests
+**** API endpoint monitoring
+**** Multi-region checks
+*** Regression Suite
+**** Nightly automated tests
+**** Weekly performance tests
+**** Monthly security scans
+**** Quarterly chaos engineering
+*** Chaos Engineering
+**** Kill random instances
+**** Simulate database lag
+**** Storage unavailability
+**** Network degradation
+**** Traffic spikes
+
+legend right
+  |= Phase |= Duration |= Success Criteria |
+  | Pre-Deployment | 2 weeks | 100% smoke tests pass |
+  | Deployment | 1 day | <15min downtime |
+  | Post-Deployment | 1 week | <0.1% error rate |
+  | Continuous | Ongoing | >99.5% uptime |
+endlegend
+
+@endwbs
+@enduml

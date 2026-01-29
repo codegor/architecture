@@ -1,0 +1,54 @@
+---
+title: ADR 001 Stack Choice
+description: Use Vue.js Frontend with PHP Monolithic Backend for Nail Master Management System
+---
+
+# 📋 ADR001: Use Vue.js Frontend with PHP Monolithic Backend for Nail Master Management System
+
+## ✅ Status
+Accepted
+
+## 📖 Context
+The Nail Master Management System requires a scalable, responsive platform that can handle real-time updates, multi-user scenarios, and complex business logic for appointment scheduling and analytics. The system needs to be accessible across desktop, tablet, and mobile devices while maintaining high performance and security.
+
+## 🎯 Decision
+We will adopt a modern web-based architecture using:
+- **🎨 Frontend**: Vue.js with TypeScript for type-safe, reactive UI development
+- **⚙️ Backend**: PHP with monolithic architecture for unified codebase and business logic
+- **🗄️ Database**: Cloud-based relational database (PostgreSQL) for reliable data persistence
+- **⚡ Real-time**: WebSocket support for live calendar synchronization
+- **☁️ Hosting**: Cloud infrastructure with automatic scaling and backups
+
+## 💡 Rationale
+1. **⚡ Developer Productivity** - Vue.js provides gentle learning curve with excellent documentation; PHP monolithic reduces complexity
+2. **📱 Cross-platform Compatibility** - Web-based solution works on all devices without native apps
+3. **🔄 Real-time Capabilities** - WebSocket support enables instant appointment synchronization
+4. **🔧 Operational Simplicity** - Monolithic architecture simplifies deployment, debugging, and maintenance
+5. **💰 Cost-effective** - Leveraging managed services and single codebase reduces operational overhead
+6. **🌐 Community & Ecosystem** - Vue.js and PHP have strong communities with extensive libraries and tooling
+
+## 📊 Consequences
+
+### ✨ Positive
+- Rapid deployment and updates without user installation
+- Seamless experience across devices
+- Simpler deployment pipeline with monolithic architecture
+- Single codebase easier to understand and maintain
+- Lower operational complexity compared to microservices
+
+### ⚠️ Negative
+- Monolithic scaling limitations at extreme scale
+- Dependency on internet connectivity
+- Browser compatibility considerations for Vue.js
+- PHP backend tightly coupled business logic may require refactoring if microservices needed later
+
+## 🔀 Alternatives Considered
+1. **React + Node.js** - Rejected: More complex ecosystem, higher learning curve for smaller team
+2. **Native Mobile Apps** - Rejected: Higher development cost, separate codebases, slower time-to-market
+3. **Microservices Architecture** - Rejected: Added complexity not needed for current project scope
+
+## 🚀 Implementation Notes
+- Start with core features (calendar, clients, services) in single PHP backend
+- Implement Vue.js components for reactive UI updates
+- Plan for WebSocket integration for real-time features
+- Document API endpoints for potential future mobile app development

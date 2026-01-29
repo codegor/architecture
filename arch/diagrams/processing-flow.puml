@@ -1,0 +1,101 @@
+@startuml
+title My Clients - Appointment Creation Flow on GCP (Vue.js + PHP)
+
+actor "Nail Master" as user
+participant "Cloud CDN" as cdn
+participant "Cloud Run\nFrontend (Vue.js)" as frontend
+participant "Cloud Armor" as armor
+participant "Cloud Run\nBackend API (PHP)" as api
+participant "Firebase Auth" as auth
+database "Cloud SQL\nPostgreSQL" as db
+participant "Cloud Storage" as storage
+participant "Cloud Tasks" as tasks
+participant "Cloud Logging" as logging
+
+user -> cdn: Open Calendar Page
+cdn -> frontend: Serve Vue.js SPA
+frontend -> user: Display Calendar UI
+
+user -> frontend: Click "New Appointment"
+frontend -> user: Show Appointment Form (Vue Component)
+
+user -> frontend: Fill Details\n(Client, Service, Date/Time)
+frontend -> armor: POST /api/appointments\n(JSON payload)
+armor -> armor: Validate Request\n(Rate Limiting, DDoS)
+
+armor -> api: Forward Request to PHP
+api -> api: Validate JSON payload\n(Laravel/Symfony validation)
+api -> auth: Verify Firebase JWT Token
+auth -> api: Token Valid (User ID)
+
+api -> api: Sanitize & validate input\n(Date, Service exists)
+
+api -> db: BEGIN TRANSACTION
+api -> db: SELECT client WHERE id = ?\n(Prepared statement)
+db -> api: Client data
+
+api -> db: SELECT service WHERE id = ?
+db -> api: Service data (price)
+
+api -> db: CHECK availability\n(no conflicts)
+db -> api: Time slot available
+
+api -> db: INSERT appointment\n(client_id, service_id, datetime)
+db -> api: Appointment ID
+
+api -> db: INSERT audit_log\n(user, action, timestamp)
+db -> api: Log created
+
+api -> db: COMMIT TRANSACTION
+
+api -> tasks: Queue reminder job\n(send 24h before)
+tasks -> api: Job queued
+
+api -> logging: Log appointment creation\n(structured JSON)
+logging -> api: Logged
+
+api -> armor: 201 Created\n{appointment_id, details}
+armor -> frontend: JSON Response
+
+frontend -> frontend: Update Vue store\n(Vuex/Pinia)
+frontend -> user: Show Success Message\n"Appointment created"
+
+frontend -> frontend: Re-render calendar\n(Vue reactivity)
+
+alt Client Photo Uploaded
+  user -> frontend: Upload photo (File input)
+  frontend -> api: POST /api/clients/:id/photo\n(FormData)
+  api -> storage: Upload to bucket\n(resize & optimize)
+  storage -> api: Photo URL
+  api -> db: UPDATE client SET photo_url\n(Prepared statement)
+  db -> api: Updated
+  api -> frontend: Photo saved (JSON response)
+  frontend -> user: Photo displayed
+end
+
+note right of api
+  **Framework:** Laravel/Symfony
+  **All operations:** Logged to Cloud Logging
+  **Metrics:** Sent to Cloud Monitoring
+  **Errors:** Tracked in Error Reporting
+  **PDO:** Connection pooling enabled
+  **Prepared statements:** Prevent SQL injection
+end note
+
+note right of tasks
+  **Cloud Tasks handles:**
+  - Email reminders (24h before)
+  - SMS notifications
+  - Monthly report generation
+  - Data export jobs
+end note
+
+note right of frontend
+  **Vue 3 Features:**
+  - Reactive forms with validation
+  - State management (Vuex/Pinia)
+  - Component composition
+  - Auto-update on server push
+end note
+
+@enduml

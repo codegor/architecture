@@ -1,0 +1,50 @@
+---
+title: Level 2 - Container
+description: Container-level view of the My Clients system
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    %% Users/Actors
+    Admin[<a href='../glossary/actor'>👤 Salon Admin<br/>Owner, Business Manager</a>]
+    Master[<a href='../glossary/actor'>👤 Nail Master<br/>Service Provider</a>]
+    Client[<a href='../glossary/actor'>👤 Salon Client<br/>End customer</a>]
+
+    %% Web Clients - Two SPAs
+    subgraph StaffPortal [Staff Portal - SPA]
+        StaffUI[🌐 Admin &amp; Master Portal Vue3<br/>Calendar • Clients • Services<br/>Analytics • Dashboard • Staff Management]
+    end
+
+    subgraph ClientPortal [Client Portal - SPA]
+        ClientUI[🌐 Client Portal Vue3<br/>My Appointments • History<br/>Services • Price • Profile]
+    end
+
+    %% Actor to Web Clients
+    Admin --> StaffUI;
+    Master --> StaffUI;
+    Client --> ClientUI;
+
+    %% Backend - Monolithic
+    Backend[<a href='c3'>🏗️ Monolith PHP Backend<br/>Core business logic and data processing</a>]
+
+    %% Web Clients to Backend
+    StaffUI --> Backend;
+    ClientUI --> Backend;
+
+    %% Styling
+    classDef userStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef staffPortalStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef clientPortalStyle fill:#f0f4c3,stroke:#827717,stroke-width:2px,color:#000
+    classDef backendStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef externalStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+    classDef dbStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+
+    class Admin,Master,Client userStyle
+    class StaffUI staffPortalStyle
+    class ClientUI clientPortalStyle
+    class Backend backendStyle
+"
+/>

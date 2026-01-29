@@ -1,0 +1,72 @@
+---
+title: Client Management Module
+description: Component details for the Client Management module in My Clients
+index: true
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    API[🔌 API Layer<br/>Client Endpoints]
+    ClientService[👥 Client Service<br/>Business Logic]
+    ClientRepo[(🗄️ Client Repository<br/>PostgreSQL)]
+    ScheduleModule[📅 Schedule Module]
+    AnalyticsModule[📊 Analytics Module]
+    NotificationModule[🔔 Notification Module]
+
+    API --> ClientService
+    ClientService --> ClientRepo
+    ClientService --> ScheduleModule
+    ClientService --> AnalyticsModule
+    ClientService --> NotificationModule
+
+    classDef apiStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    classDef moduleStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef dbStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+
+    class API apiStyle
+    class ClientService,ScheduleModule,AnalyticsModule,NotificationModule moduleStyle
+    class ClientRepo dbStyle
+"
+/>
+
+# 👥 Client Management Module
+
+This module is responsible for all client-related data and operations within the My Clients platform.
+
+## Responsibilities
+
+- Manage client profiles, contact information, and preferences
+- Track client service history and visit frequency
+- Store client notes and special requests
+- Support client segmentation and search/filtering
+- Interface with scheduling, analytics, and notification modules
+
+## Key Components
+
+- **Client Repository:** Handles CRUD operations for client data in the database
+- **Client Service:** Business logic for managing clients, including profile updates, segmentation, and history tracking
+- **API Endpoints:** REST endpoints for client management (create, update, search, etc.)
+- **Integration:** Interacts with Schedule, Analytics, and Notification modules
+
+## Data Model
+
+- Client ID
+- Name, contact info (phone, email)
+- Preferences and notes
+- Service history (appointments, services received)
+- Loyalty/engagement metrics
+
+## Interactions
+
+- **Schedule Module:** Links clients to appointments and tracks visit frequency
+- **Analytics Module:** Provides client data for reporting and insights
+- **Notification Module:** Sends reminders and alerts to clients
+
+## Technologies
+
+- PHP (Symfony)
+- PostgreSQL (client data storage)
+- REST API

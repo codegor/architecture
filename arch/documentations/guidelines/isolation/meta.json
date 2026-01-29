@@ -1,0 +1,9 @@
+{
+  "title": "Data isolation",
+  "description": "A data isolation guideline used in the **My Clients** project.",
+  "pages": [
+    "js",
+    "php",
+    "e2e"
+  ]
+}

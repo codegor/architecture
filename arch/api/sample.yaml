@@ -1203,7 +1203,6 @@ components:
                 - "2024-01-15T14:30:00Z"
             totalSpent:
               type: number
-              format: float
               minimum: 0
               examples:
                 - 450.75
@@ -1284,14 +1283,12 @@ components:
             - "Professional gel manicure with color and design lasting 2-3 weeks"
         price:
           type: number
-          format: float
           minimum: 0
           multipleOf: 0.01
           examples:
             - 35.50
         discountPrice:
           type: number
-          format: float
           minimum: 0
           description: Sale or discounted price if applicable
           examples:
@@ -1335,7 +1332,6 @@ components:
           description: Total number of times this service was booked
         rating:
           type: number
-          format: float
           minimum: 0
           maximum: 5
           readOnly: true
@@ -1368,12 +1364,10 @@ components:
           maxLength: 500
         price:
           type: number
-          format: float
           minimum: 0
           multipleOf: 0.01
         discountPrice:
           type: number
-          format: float
           minimum: 0
         duration:
           type: integer
@@ -1455,7 +1449,6 @@ components:
             - "scheduled"
         price:
           type: number
-          format: float
           minimum: 0
           readOnly: true
           description: Total price including discounts
@@ -1557,7 +1550,6 @@ components:
             - "2024-01"
         totalRevenue:
           type: number
-          format: float
           examples:
             - 2450.75
         totalAppointments:
@@ -1582,7 +1574,6 @@ components:
             - 87
         averageServicePrice:
           type: number
-          format: float
           examples:
             - 45.25
         topServices:
@@ -1599,7 +1590,6 @@ components:
                 type: integer
               revenue:
                 type: number
-                format: float
 
     RevenueAnalytics:
       description: Revenue trend analysis
@@ -1617,7 +1607,6 @@ components:
             - "2024-01-31T23:59:59Z"
         totalRevenue:
           type: number
-          format: float
         dailyRevenue:
           type: array
           items:
@@ -1630,15 +1619,12 @@ components:
                   - "2024-01-15T00:00:00Z"
               revenue:
                 type: number
-                format: float
               appointmentCount:
                 type: integer
         averageDailyRevenue:
           type: number
-          format: float
         growthPercentage:
           type: number
-          format: float
           description: Month-over-month growth percentage
 
     ClientAnalytics:
@@ -1659,13 +1645,11 @@ components:
             - 138
         clientRetentionRate:
           type: number
-          format: float
           description: Percentage of returning clients
           examples:
             - 92.0
         averageVisitsPerClient:
           type: number
-          format: float
           examples:
             - 4.5
         clientsByFrequency:
@@ -1786,7 +1770,6 @@ components:
             - "active"
         commission:
           type: number
-          format: float
           description: Commission percentage or base commission amount
           minimum: 0
           examples:
@@ -1849,7 +1832,6 @@ components:
             - on-leave
         commission:
           type: number
-          format: float
           minimum: 0
 
     StaffAvailability:
@@ -1892,7 +1874,7 @@ components:
               reason:
                 type: string
                 examples:
-                  - "Vacation", "Sick leave", "Training"
+                  - "Vacation"
 
     DaySchedule:
       description: Working hours for a specific day

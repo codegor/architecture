@@ -1,0 +1,40 @@
+---
+title: Level 1 - System Context
+description: High-level system context diagram
+---
+
+<Diagram
+  lang="mermaid"
+  chart="
+graph TD;
+
+    %% Users
+    Admin[<a href='../glossary/actor'>👤 Salon Admin<br/>Owner, Business Manager</a>]
+    Master[<a href='../glossary/actor'>👤 Nail Master<br/>Service Provider</a>]
+    Client[<a href='../glossary/actor'>👤 Salon Client<br/>End customer</a>]
+
+    %% Main System
+    Main[<a href='c2'>💅 My Clients<br/>Nail Master Management System</a>]
+
+    %% User to System Relationships
+    Admin -->|Manages staff, business settings, views revenue| Main
+    Master -->|Manages schedule, services, appointment status| Main
+    Client -->|Receives confirmations, view history| Main
+
+    %% External Systems
+    Notifications[📧 Notifications Service<br/>Email/SMS provider]
+
+    %% System to External Systems
+    Main -->|Sends reminders & alerts| Notifications
+
+    %% Styling
+    classDef userStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef systemStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:3px,color:#00
+    classDef externalStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+
+    class Admin,Master,Client userStyle
+    class Main systemStyle
+    class Notifications externalStyle
+
+"
+/>

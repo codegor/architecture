@@ -1,0 +1,72 @@
+---
+title: Overview
+description: Sequence diagrams showing interactions between system components in the My Clients platform
+---
+
+# Sequence Diagrams
+
+Sequence diagrams in **My Clients - Nail Master Management System** visually represent how users, staff, and system components interact during key business workflows. These diagrams clarify the flow of messages and actions between the client portal, staff portal, backend services, and notification systems, making it easier to understand and optimize the platform's dynamic behavior.
+
+## Features
+
+### 📊 Visualizing Nail Master Workflows
+
+Sequence diagrams illustrate the step-by-step interactions for core scenarios such as:
+
+- **Client Registration**: How new clients sign up and are onboarded
+- **Service Booking**: The process of browsing, selecting, and booking services
+- **Service Updates**: How nail masters update service details and pricing
+- **Notifications**: Automated confirmations and reminders sent to clients
+- **Authentication**: Secure login and access flows for clients and staff
+
+### 🎯 Use Cases in My Clients
+
+- **Appointment Scheduling**: Visualize the booking process from client request to confirmation
+- **Service Management**: Show how nail masters manage and update their service catalog
+- **Client Onboarding**: Document the registration and welcome flow for new clients
+- **Error Handling**: Illustrate how the system responds to booking conflicts or invalid data
+
+### 🛠️ Supported Tools
+
+This documentation uses:
+
+- **Mermaid** - For simple, inline sequence diagrams in MDX
+- **PlantUML** - For detailed, production-grade diagrams of business flows
+
+## Available Sequence Diagrams
+
+### Account & Client Flows
+
+- [Create Client](client/create-client) - Sequence diagram for new client registration
+- [Request Service](client/request-service) - Sequence diagram for booking a service
+
+### Master & Service Flows
+
+- [Update Service](master/update-service) - Sequence diagram for updating a service as a nail master
+
+## How It Works
+
+Sequence diagrams are rendered directly in the documentation using diagram-as-code tools. Click any diagram to view it in detail.
+
+### Example Structure
+
+```
+sequenceDiagram
+    participant Client
+    participant "Client Portal"
+    participant "Backend API"
+
+    Client->>"Client Portal": Book Service
+    "Client Portal"->>"Backend API": Create Appointment
+    "Backend API"-->>"Client Portal": Confirmation
+    "Client Portal"-->>Client: Show Confirmation
+```
+
+## Best Practices
+
+1. **Descriptive Participants**: Use clear names for clients, nail masters, portals, and services
+2. **Request & Response Flows**: Show both directions for each interaction
+3. **Activation Boxes**: Indicate when a component is actively processing
+4. **Loops & Conditions**: Represent repeated or conditional steps
+5. **Error Handling**: Include alternative flows for errors or exceptions
+6. **Chronological Order**: Arrange messages from top (start) to bottom (end)
