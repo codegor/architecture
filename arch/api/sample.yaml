@@ -1,106 +1,270 @@
-openapi: 3.1.1
+openapi: 3.1.0
 info:
-  title: Scalar Galaxy
+  title: My Clients - Nail Master Management API
   description: |
-    The Scalar Galaxy is an example OpenAPI specification to test OpenAPI tools and libraries. It’s a fictional universe with fictional planets and fictional data. Get all the data for [all planets](#tag/planets/GET/planets).
+    A comprehensive REST API for the My Clients platform - a professional client and service management system designed for nail masters and beauty professionals.
+
+    ## Features
+
+    * **Client Management** - Create and manage detailed client profiles with contact information and preferences
+    * **Service Catalog** - Define services with dynamic pricing and duration estimates
+    * **Appointment Scheduling** - Integrated calendar system for managing bookings
+    * **Business Analytics** - Real-time insights into revenue, client metrics, and performance
+    * **Multi-User Support** - Role-based access control for salon teams
 
     ## Resources
 
-    * https://github.com/scalar/scalar
-    * https://github.com/OAI/OpenAPI-Specification
-    * https://scalar.com
+    * [My Clients Documentation](https://myClients.example.com/docs)
+    * [GitHub Repository](https://github.com/mynails/my-clients)
+    * [Support Portal](https://support.myClients.example.com)
 
-    ## Markdown Support
-
-    All descriptions *can* contain ~~tons of text~~ **Markdown**. [If GitHub supports the syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax), chances are we’re supporting it, too. You can even create [internal links to reference endpoints](#tag/authentication/POST/user/signup).
-
-    <details>
-      <summary>Examples</summary>
-
-      **Blockquotes**
-
-      > I love OpenAPI. <3
-
-      **Tables**
-
-      | Feature          | Availability |
-      | ---------------- | ------------ |
-      | Markdown Support | ✓            |
-
-      **Accordion**
-
-      ```html
-      <details>
-        <summary>Using Details Tags</summary>
-        <p>HTML Example</p>
-      </details>
-      ```
-
-      **Images**
-
-      Yes, there’s support for images, too!
-
-      ![Empty placeholder image showing the width/height](https://images.placeholders.dev/?width=1280&height=720)
-
-      **Alerts**
-
-      > [!tip]
-      > You can now use markdown alerts in your descriptions.
-
-    </details>
   version: 1.0.0
   contact:
-    name: Marc from Scalar
-    url: https://scalar.com
-    email: marc@scalar.com
+    name: My Clients Support
+    url: https://myClients.example.com
+    email: support@myClients.example.com
   license:
     name: MIT
     url: https://opensource.org/license/MIT
+
 externalDocs:
-  description: Documentation
-  url: https://github.com/scalar/scalar
+  description: API Documentation
+  url: https://myClients.example.com/api/docs
+
 servers:
-  - url: https://galaxy.scalar.com
-  - url: '{protocol}://void.scalar.com/{path}'
-    description: Responds with your request data
-    variables:
-      protocol:
-        enum:
-          - https
-        default: https
-      path:
-        default: ''
+  - url: https://api.myClients.com/v1
+    description: Production API
+  - url: https://staging-api.myClients.com/v1
+    description: Staging API
+
 security:
   - bearerAuth: []
-  - basicAuth: []
-  - apiKeyQuery: []
   - apiKeyHeader: []
-  - apiKeyCookie: []
-  - oAuth2: []
-  - openIdConnect: []
+
 tags:
   - name: Authentication
-    description:
-      Some endpoints are public, but some require authentication. We provide
-      all the required endpoints to create an account and authorize yourself.
-  - name: Planets
-    description: Everything about planets
+    description: User authentication and authorization endpoints
+  - name: Clients
+    description: Client profile management and operations
+  - name: Services
+    description: Service catalog and pricing management
+  - name: Appointments
+    description: Appointment scheduling and calendar management
+  - name: Staff
+    description: Staff/technician management and availability
+  - name: Notifications
+    description: Notification preferences and history
+  - name: Analytics
+    description: Business metrics and performance analytics
+
 paths:
-  '/planets':
-    get:
+  /auth/signup:
+    post:
       tags:
-        - Planets
-      summary: Get all planets
-      description: It’s easy to say you know them all, but do you really? Retrieve all the planets and check whether you missed one.
-      operationId: getAllData
+        - Authentication
+      summary: Create a new account
+      description: Register a new nail master or salon account
+      operationId: createAccount
       security:
         - {}
+      requestBody:
+        description: Account registration details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate user
+      description: Login with email and password to receive authentication token
+      operationId: login
+      security:
+        - {}
+      requestBody:
+        description: Login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/profile:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user profile
+      description: Retrieve authenticated user information
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /clients:
+    get:
+      tags:
+        - Clients
+      summary: List all clients
+      description: Retrieve paginated list of clients with optional filtering
+      operationId: listClients
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - name: search
+          in: query
+          description: Search by client name or phone number
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Clients retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Client'
+                  - $ref: '#/components/schemas/PaginatedResource'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Clients
+      summary: Create a new client
+      description: Add a new client to the client database
+      operationId: createClient
+      requestBody:
+        description: Client information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /clients/{clientId}:
+    get:
+      tags:
+        - Clients
+      summary: Get client details
+      description: Retrieve complete information about a specific client
+      operationId: getClient
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Client found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Clients
+      summary: Update client information
+      description: Modify client profile details
+      operationId: updateClient
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      requestBody:
+        description: Updated client information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+      responses:
+        '200':
+          description: Client updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Clients
+      summary: Delete a client
+      description: Remove a client from the system
+      operationId: deleteClient
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '204':
+          description: Client deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /services:
+    get:
+      tags:
+        - Services
+      summary: List all services
+      description: Retrieve all services in the catalog
+      operationId: listServices
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
       responses:
         '200':
-          description: OK
+          description: Services retrieved successfully
           content:
             application/json:
               schema:
@@ -110,511 +274,826 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Planet'
+                          $ref: '#/components/schemas/Service'
                   - $ref: '#/components/schemas/PaginatedResource'
-            application/xml:
-              schema:
-                allOf:
-                  - type: object
-                    xml:
-                      name: planets
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Planet'
-                  - $ref: '#/components/schemas/PaginatedResource'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
     post:
       tags:
-        - Planets
-      summary: Create a planet
-      description: Time to play god and create a new planet. What do you think? Ah, don’t think too much. What could go wrong anyway?
-      operationId: createPlanet
-      callbacks:
-        planetCreated:
-          '{$request.body#/successCallbackUrl}':
-            post:
-              requestBody:
-                description: Information about the newly created planet
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/Planet'
-              responses:
-                '200':
-                  description: Your server returns this code if it accepts the callback
-                '204':
-                  description: Your server should return this HTTP status code if no longer interested in further updates
-          '{$request.body#/failureCallbackUrl}':
-            post:
-              requestBody:
-                description: Information about which fields failed to validate
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/Planet'
-              responses:
-                '200':
-                  description: Your server returns this code if it accepts the callback
-        planetExploded:
-          '{$request.body#/successCallbackUrl}':
-            post:
-              requestBody:
-                description: Information about the newly exploded planet
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/Planet'
-              responses:
-                '200':
-                  description: Your server returns this code if it accepts the callback
+        - Services
+      summary: Create a new service
+      description: Add a new service to the catalog
+      operationId: createService
       requestBody:
-        description: Planet
+        description: Service details
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Planet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Planet'
+              $ref: '#/components/schemas/ServiceRequest'
       responses:
         '201':
-          description: Created
+          description: Service created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Planet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Planet'
+                $ref: '#/components/schemas/Service'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-  '/planets/{planetId}':
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /services/{serviceId}:
     get:
       tags:
-        - Planets
-      summary: Get a planet
-      description: You’ll better learn a little bit more about the planets. It might come in handy once space travel is available for everyone.
-      operationId: getPlanet
-      security:
-        - {}
+        - Services
+      summary: Get service details
+      description: Retrieve information about a specific service
+      operationId: getService
       parameters:
-        - $ref: '#/components/parameters/planetId'
+        - $ref: '#/components/parameters/serviceId'
       responses:
         '200':
-          description: Planet Found
+          description: Service found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Planet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Planet'
+                $ref: '#/components/schemas/Service'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+
     put:
       tags:
-        - Planets
-      summary: Update a planet
-      description: Sometimes you make mistakes, that's fine. No worries, you can update all planets.
-      operationId: updatePlanet
+        - Services
+      summary: Update service
+      description: Modify service details or pricing
+      operationId: updateService
+      parameters:
+        - $ref: '#/components/parameters/serviceId'
       requestBody:
-        description: New information about the planet
+        description: Updated service information
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Planet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Planet'
-      parameters:
-        - $ref: '#/components/parameters/planetId'
+              $ref: '#/components/schemas/ServiceRequest'
       responses:
         '200':
-          description: OK
+          description: Service updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Planet'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Planet'
+                $ref: '#/components/schemas/Service'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '403':
-          $ref: '#/components/responses/Forbidden'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+
     delete:
       tags:
-        - Planets
-      summary: Delete a planet
-      operationId: deletePlanet
-      description:
-        This endpoint was used to delete planets. Unfortunately, that caused
-        a lot of trouble for planets with life. So, this endpoint is now deprecated
-        and should not be used anymore.
-      x-scalar-stability: experimental
+        - Services
+      summary: Delete service
+      description: Remove a service from the catalog
+      operationId: deleteService
       parameters:
-        - $ref: '#/components/parameters/planetId'
+        - $ref: '#/components/parameters/serviceId'
       responses:
         '204':
-          description: No Content
-        '404':
-          $ref: '#/components/responses/NotFound'
-  '/planets/{planetId}/image':
-    post:
-      tags:
-        - Planets
-      summary: Upload an image to a planet
-      description: Got a crazy good photo of a planet? Share it with the world!
-      operationId: uploadImage
-      parameters:
-        - $ref: '#/components/parameters/planetId'
-      requestBody:
-        description: Image to upload
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                  description: The image file to upload
-                  examples:
-                    - '@mars.jpg'
-                    - '@jupiter.png'
-      responses:
-        '200':
-          $ref: '#/components/responses/ImageUploaded'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  '/user/signup':
-    post:
-      tags:
-        - Authentication
-      summary: Create a user
-      description: Time to create a user account, eh?
-      operationId: createUser
-      security:
-        - {}
-      requestBody:
-        description: User to create
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/User'
-                - $ref: '#/components/schemas/Credentials'
-            examples:
-              Marc:
-                value:
-                  name: Marc
-                  email: marc@scalar.com
-                  password: i-love-scalar
-              Cam:
-                value:
-                  name: Cam
-                  email: cam@scalar.com
-                  password: scalar-is-cool
-          application/xml:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/User'
-                - $ref: '#/components/schemas/Credentials'
-            examples:
-              Marc:
-                value:
-                  name: Marc
-                  email: marc@scalar.com
-                  password: i-love-scalar
-              Cam:
-                value:
-                  name: Cam
-                  email: cam@scalar.com
-                  password: scalar-is-cool
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+          description: Service deleted successfully
         '401':
           $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-  '/auth/token':
-    post:
-      tags:
-        - Authentication
-      summary: Get a token
-      description: Yeah, this is the boring security stuff. Just get your super secret token and move on.
-      operationId: getToken
-      security:
-        - {}
-      requestBody:
-        description: Credentials to authenticate a user
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Credentials'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Credentials'
-      responses:
-        '201':
-          description: Token Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Token'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  '/me':
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /appointments:
     get:
       tags:
-        - Authentication
-      summary: Get authenticated user
-      description: Find yourself they say. That’s what you can do here.
-      operationId: getMe
-      security:
-        - basicAuth: []
-        - oAuth2:
-            - read:account
-        - bearerAuth: []
-        - apiKeyHeader: []
-        - apiKeyQuery: []
+        - Appointments
+      summary: List appointments
+      description: Retrieve appointments with optional date filtering
+      operationId: listAppointments
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - name: startDate
+          in: query
+          description: Filter appointments from this date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+            examples:
+              - "2024-01-01T00:00:00Z"
+        - name: endDate
+          in: query
+          description: Filter appointments until this date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+            examples:
+              - "2024-01-31T23:59:59Z"
+        - name: status
+          in: query
+          description: Filter by appointment status
+          schema:
+            type: string
+            enum:
+              - scheduled
+              - completed
+              - cancelled
+              - no-show
       responses:
         '200':
-          description: OK
+          description: Appointments retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Appointment'
+                  - $ref: '#/components/schemas/PaginatedResource'
         '401':
           $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-webhooks:
-  newPlanet:
+
     post:
       tags:
-        - Planets
+        - Appointments
+      summary: Create appointment
+      description: Schedule a new appointment for a client
+      operationId: createAppointment
       requestBody:
-        description: Information about a new planet
+        description: Appointment details
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Planet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Planet'
+              $ref: '#/components/schemas/AppointmentRequest'
+      responses:
+        '201':
+          description: Appointment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /appointments/{appointmentId}:
+    get:
+      tags:
+        - Appointments
+      summary: Get appointment details
+      description: Retrieve information about a specific appointment
+      operationId: getAppointment
+      parameters:
+        - $ref: '#/components/parameters/appointmentId'
       responses:
         '200':
-          description:
-            Return a 200 status to indicate that the data was received
-            successfully
+          description: Appointment found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Appointments
+      summary: Update appointment
+      description: Modify appointment details or reschedule
+      operationId: updateAppointment
+      parameters:
+        - $ref: '#/components/parameters/appointmentId'
+      requestBody:
+        description: Updated appointment information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentRequest'
+      responses:
+        '200':
+          description: Appointment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+    delete:
+      tags:
+        - Appointments
+      summary: Cancel appointment
+      description: Cancel or remove an appointment
+      operationId: deleteAppointment
+      parameters:
+        - $ref: '#/components/parameters/appointmentId'
+      responses:
+        '204':
+          description: Appointment cancelled successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /analytics/dashboard:
+    get:
+      tags:
+        - Analytics
+      summary: Get dashboard analytics
+      description: Retrieve key business metrics for the current month
+      operationId: getDashboardMetrics
+      parameters:
+        - name: month
+          in: query
+          description: Month in YYYY-MM format (defaults to current month)
+          schema:
+            type: string
+            pattern: '^\d{4}-\d{2}$'
+            examples:
+              - "2024-01"
+      responses:
+        '200':
+          description: Dashboard metrics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /analytics/revenue:
+    get:
+      tags:
+        - Analytics
+      summary: Get revenue analytics
+      description: Retrieve revenue trends and income statistics
+      operationId: getRevenueAnalytics
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date in ISO 8601 format
+          schema:
+            type: string
+            format: date-time
+            examples:
+              - "2024-01-01T00:00:00Z"
+        - name: endDate
+          in: query
+          description: End date in ISO 8601 format
+          schema:
+            type: string
+            format: date-time
+            examples:
+              - "2024-01-31T23:59:59Z"
+      responses:
+        '200':
+          description: Revenue analytics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevenueAnalytics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /analytics/clients:
+    get:
+      tags:
+        - Analytics
+      summary: Get client analytics
+      description: Retrieve client statistics and engagement metrics
+      operationId: getClientAnalytics
+      responses:
+        '200':
+          description: Client analytics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientAnalytics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /staff:
+    get:
+      tags:
+        - Staff
+      summary: List all staff members
+      description: Retrieve all staff/technicians in the salon
+      operationId: listStaff
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - name: status
+          in: query
+          description: Filter by staff status
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+              - on-leave
+      responses:
+        '200':
+          description: Staff members retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Staff'
+                  - $ref: '#/components/schemas/PaginatedResource'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Staff
+      summary: Add new staff member
+      description: Register a new technician or staff member
+      operationId: createStaff
+      requestBody:
+        description: Staff member information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffRequest'
+      responses:
+        '201':
+          description: Staff member created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /staff/{staffId}:
+    get:
+      tags:
+        - Staff
+      summary: Get staff details
+      description: Retrieve complete information about a staff member
+      operationId: getStaff
+      parameters:
+        - $ref: '#/components/parameters/staffId'
+      responses:
+        '200':
+          description: Staff member found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Staff
+      summary: Update staff information
+      description: Modify staff member details and roles
+      operationId: updateStaff
+      parameters:
+        - $ref: '#/components/parameters/staffId'
+      requestBody:
+        description: Updated staff information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffRequest'
+      responses:
+        '200':
+          description: Staff member updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Staff'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Staff
+      summary: Remove staff member
+      description: Deactivate or remove a staff member from the system
+      operationId: deleteStaff
+      parameters:
+        - $ref: '#/components/parameters/staffId'
+      responses:
+        '204':
+          description: Staff member removed successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /staff/{staffId}/availability:
+    get:
+      tags:
+        - Staff
+      summary: Get staff availability
+      description: Retrieve availability schedule for a staff member
+      operationId: getStaffAvailability
+      parameters:
+        - $ref: '#/components/parameters/staffId'
+        - name: date
+          in: query
+          description: Specific date to check availability (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+            examples:
+              - "2024-01-20T00:00:00Z"
+      responses:
+        '200':
+          description: Availability schedule retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffAvailability'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Staff
+      summary: Update staff availability
+      description: Set working hours and availability periods
+      operationId: updateStaffAvailability
+      parameters:
+        - $ref: '#/components/parameters/staffId'
+      requestBody:
+        description: Availability schedule
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffAvailabilityRequest'
+      responses:
+        '200':
+          description: Availability updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffAvailability'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: List notifications
+      description: Retrieve notification history for the current user
+      operationId: listNotifications
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - name: type
+          in: query
+          description: Filter by notification type
+          schema:
+            type: string
+            enum:
+              - appointment
+              - client-message
+              - system
+              - payment
+              - review
+        - name: read
+          in: query
+          description: Filter by read status
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Notifications retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Notification'
+                  - $ref: '#/components/schemas/PaginatedResource'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /notifications/{notificationId}:
+    get:
+      tags:
+        - Notifications
+      summary: Get notification details
+      description: Retrieve detailed information about a specific notification
+      operationId: getNotification
+      parameters:
+        - $ref: '#/components/parameters/notificationId'
+      responses:
+        '200':
+          description: Notification found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Notifications
+      summary: Mark notification as read
+      description: Update notification read status
+      operationId: markNotificationAsRead
+      parameters:
+        - $ref: '#/components/parameters/notificationId'
+      requestBody:
+        description: Notification update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - isRead
+              properties:
+                isRead:
+                  type: boolean
+      responses:
+        '200':
+          description: Notification updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Notifications
+      summary: Delete notification
+      description: Remove a notification from history
+      operationId: deleteNotification
+      parameters:
+        - $ref: '#/components/parameters/notificationId'
+      responses:
+        '204':
+          description: Notification deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /notifications/preferences:
+    get:
+      tags:
+        - Notifications
+      summary: Get notification preferences
+      description: Retrieve user notification preferences and settings
+      operationId: getNotificationPreferences
+      responses:
+        '200':
+          description: Notification preferences retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      tags:
+        - Notifications
+      summary: Update notification preferences
+      description: Configure notification channels and types
+      operationId: updateNotificationPreferences
+      requestBody:
+        description: Notification preferences
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreferencesRequest'
+      responses:
+        '200':
+          description: Preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreferences'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: JWT Bearer token authentication
-    basicAuth:
-      type: http
-      scheme: basic
-      description: Basic HTTP authentication
+      bearerFormat: JWT
     apiKeyHeader:
       type: apiKey
       in: header
       name: X-API-Key
-      description: API key request header
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: api_key
-      description: API key query parameter
-    apiKeyCookie:
-      type: apiKey
-      in: cookie
-      name: api_key
-      description: API key browser cookie
-    oAuth2:
-      type: oauth2
-      description: OAuth 2.0 authentication
-      flows:
-        authorizationCode:
-          authorizationUrl: https://galaxy.scalar.com/oauth/authorize
-          tokenUrl: https://galaxy.scalar.com/oauth/token
-          scopes:
-            read:account: read your account information
-            write:planets: modify planets in your account
-            read:planets: read your planets
-        clientCredentials:
-          tokenUrl: https://galaxy.scalar.com/oauth/token
-          scopes:
-            read:account: read your account information
-            write:planets: modify planets in your account
-            read:planets: read your planets
-        # Legacy
-        implicit:
-          authorizationUrl: https://galaxy.scalar.com/oauth/authorize
-          scopes:
-            read:account: read your account information
-            write:planets: modify planets in your account
-            read:planets: read your planets
-        # Legacy
-        password:
-          tokenUrl: https://galaxy.scalar.com/oauth/token
-          scopes:
-            read:account: read your account information
-            write:planets: modify planets in your account
-            read:planets: read your planets
-    openIdConnect:
-      type: openIdConnect
-      openIdConnectUrl: https://galaxy.scalar.com/.well-known/openid-configuration
-      description: OpenID Connect Authentication
+      description: API key in request header
+
   parameters:
-    planetId:
-      name: planetId
-      description: The ID of the planet to get
+    clientId:
+      name: clientId
+      description: Unique identifier of the client
       in: path
       required: true
       schema:
-        type: integer
-        format: int64
-        examples:
-          - 1
+        type: string
+        format: uuid
+    serviceId:
+      name: serviceId
+      description: Unique identifier of the service
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    appointmentId:
+      name: appointmentId
+      description: Unique identifier of the appointment
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    staffId:
+      name: staffId
+      description: Unique identifier of the staff member
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    notificationId:
+      name: notificationId
+      description: Unique identifier of the notification
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     limit:
       name: limit
-      description: The number of items to return
+      description: Maximum number of items to return
       in: query
       required: false
       schema:
         type: integer
-        format: int64
-        default: 10
+        format: int32
+        default: 20
+        minimum: 1
+        maximum: 100
     offset:
       name: offset
-      description:
-        The number of items to skip before starting to collect the result
-        set
+      description: Number of items to skip
       in: query
       required: false
       schema:
         type: integer
-        format: int64
+        format: int32
         default: 0
+        minimum: 0
+
   responses:
-    ImageUploaded:
-      description: Image uploaded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ImageUploadedMessage'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/ImageUploadedMessage'
     BadRequest:
-      description: Bad Request
+      description: Bad Request - Invalid input parameters
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/BadRequestError'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/BadRequestError'
-    Forbidden:
-      description: Forbidden
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ForbiddenError'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/ForbiddenError'
-    NotFound:
-      description: NotFound
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotFoundError'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/NotFoundError'
+            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
-      description: Unauthorized
+      description: Unauthorized - Authentication required or invalid
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
-        application/xml:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not Found - Resource does not exist
+      content:
+        application/json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: '#/components/schemas/ErrorResponse'
     Conflict:
-      description: Conflict
+      description: Conflict - Resource conflict or duplicate
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Conflict'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Conflict'
-    UnprocessableEntity:
-      description: Unprocessable Entity
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UnprocessableEntity'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/UnprocessableEntity'
+            $ref: '#/components/schemas/ErrorResponse'
+
   schemas:
     User:
-      description: A user
+      description: User account information
       type: object
-      xml:
-        name: user
+      required:
+        - id
+        - email
+        - businessName
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
           examples:
-            - 1
-        name:
+            - "550e8400-e29b-41d4-a716-446655440000"
+        email:
+          type: string
+          format: email
+          examples:
+            - "nailmaster@example.com"
+        businessName:
           type: string
           examples:
-            - Marc
-    Credentials:
-      description: Credentials to authenticate a user
+            - "Gorgeous Nails Studio"
+        phone:
+          type: string
+          examples:
+            - "+1-555-123-4567"
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    SignupRequest:
+      description: Account registration request
+      type: object
+      required:
+        - email
+        - password
+        - businessName
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        businessName:
+          type: string
+          minLength: 2
+        phone:
+          type: string
+
+    LoginRequest:
+      description: Login credentials
       type: object
       required:
         - email
@@ -623,170 +1102,590 @@ components:
         email:
           type: string
           format: email
-          examples:
-            - marc@scalar.com
         password:
           type: string
           writeOnly: true
-          examples:
-            - i-love-scalar
-            - i-love-OSS
-            - i-love-code
-    Token:
-      description: A token to authenticate a user
+
+    AuthToken:
+      description: Authentication token response
       type: object
       properties:
         token:
           type: string
           examples:
-            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-    Planet:
-      description: A planet in the Scalar Galaxy
+            - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expiresIn:
+          type: integer
+          description: Token expiration time in seconds
+          examples:
+            - 86400
+
+    Client:
+      description: Client profile
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          examples:
+            - "550e8400-e29b-41d4-a716-446655440001"
+        firstName:
+          type: string
+          minLength: 1
+          examples:
+            - "Sarah"
+        lastName:
+          type: string
+          minLength: 1
+          examples:
+            - "Johnson"
+        email:
+          type: string
+          format: email
+          examples:
+            - "sarah@example.com"
+        phone:
+          type: string
+          pattern: '^\+?1?\d{9,15}$'
+          examples:
+            - "+1-555-987-6543"
+        birthDate:
+          type: string
+          format: date-time
+          description: Client's date of birth
+          examples:
+            - "1990-05-15T00:00:00Z"
+        preferences:
+          type: object
+          description: Client service preferences and notes
+          properties:
+            favoriteServices:
+              type: array
+              description: List of preferred service IDs
+              items:
+                type: string
+                format: uuid
+            preferredTechnicians:
+              type: array
+              description: Preferred staff members
+              items:
+                type: string
+                format: uuid
+            notes:
+              type: string
+              maxLength: 500
+              examples:
+                - "Prefers gel extensions, allergic to acrylic, sensitive nails"
+            color:
+              type: string
+              description: Favorite nail color
+              examples:
+                - "Rose gold"
+        visitHistory:
+          type: object
+          readOnly: true
+          properties:
+            totalVisits:
+              type: integer
+              minimum: 0
+              examples:
+                - 12
+            lastVisit:
+              type: string
+              format: date-time
+              examples:
+                - "2024-01-15T14:30:00Z"
+            totalSpent:
+              type: number
+              format: float
+              minimum: 0
+              examples:
+                - 450.75
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - vip
+          default: active
+          description: Client status/tier
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    ClientRequest:
+      description: Client profile creation/update request
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        preferences:
+          type: object
+          properties:
+            favoriteServices:
+              type: array
+              items:
+                type: string
+                format: uuid
+            notes:
+              type: string
+
+    Service:
+      description: Service offering in the catalog
       type: object
       required:
         - id
         - name
-      xml:
-        name: planet
+        - price
+        - duration
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
           examples:
-            - 1
-          x-variable: planetId
+            - "770e8400-e29b-41d4-a716-446655440002"
         name:
           type: string
+          minLength: 1
+          maxLength: 100
           examples:
-            - Mars
-            - Jupiter
-            - HD 40307g
+            - "Gel Manicure"
+            - "Acrylic Nails"
+            - "Nail Art Design"
         description:
-          type:
-            - string
-            - 'null'
-          examples:
-            - The red planet
-            - A gas giant with a great red spot
-        type:
           type: string
-          enum:
-            - terrestrial
-            - gas_giant
-            - ice_giant
-            - dwarf
-            - super_earth
+          maxLength: 500
           examples:
-            - terrestrial
-        habitabilityIndex:
+            - "Professional gel manicure with color and design lasting 2-3 weeks"
+        price:
           type: number
           format: float
           minimum: 0
-          maximum: 1
-          description: A score from 0 to 1 indicating potential habitability
+          multipleOf: 0.01
           examples:
-            - 0.68
-        physicalProperties:
-          type: object
-          properties:
-            mass:
-              type: number
-              format: float
-              description: Mass in Earth masses
-              examples:
-                - 0.107
-            radius:
-              type: number
-              format: float
-              description: Radius in Earth radii
-              examples:
-                - 0.532
-            gravity:
-              type: number
-              format: float
-              description: Surface gravity in Earth g
-              examples:
-                - 0.378
-            temperature:
-              type: object
-              properties:
-                min:
-                  type: number
-                  format: float
-                  description: Minimum temperature in Kelvin
-                  examples:
-                    - 130
-                max:
-                  type: number
-                  format: float
-                  description: Maximum temperature in Kelvin
-                  examples:
-                    - 308
-                average:
-                  type: number
-                  format: float
-                  description: Average temperature in Kelvin
-                  examples:
-                    - 210
-        atmosphere:
-          type: array
-          description: Atmospheric composition
-          items:
-            type: object
-            properties:
-              compound:
-                type: string
-                examples:
-                  - CO2
-                  - N2
-              percentage:
-                type: number
-                format: float
-                examples:
-                  - 95.3
-        discoveredAt:
+            - 35.50
+        discountPrice:
+          type: number
+          format: float
+          minimum: 0
+          description: Sale or discounted price if applicable
+          examples:
+            - 29.99
+        duration:
+          type: integer
+          description: Service duration in minutes
+          minimum: 5
+          examples:
+            - 45
+        category:
           type: string
-          format: date-time
+          enum:
+            - manicure
+            - pedicure
+            - extension
+            - design
+            - repair
+            - other
           examples:
-            - '1610-01-07T00:00:00Z'
+            - "manicure"
         image:
           type: string
-          nullable: true
+          format: uri
+          description: Service image URL
           examples:
-            - https://cdn.scalar.com/photos/mars.jpg
-        satellites:
-          type: array
-          items:
-            $ref: '#/components/schemas/Satellite'
-        creator:
-          $ref: '#/components/schemas/User'
-        tags:
-          type: array
-          items:
-            type: string
+            - "https://cdn.example.com/services/gel-manicure.jpg"
+        isActive:
+          type: boolean
+          default: true
           examples:
-            - ['solar-system', 'rocky', 'explored']
-        lastUpdated:
+            - true
+        isFeatured:
+          type: boolean
+          default: false
+          description: Featured service in catalog
+        bookingCount:
+          type: integer
+          readOnly: true
+          minimum: 0
+          description: Total number of times this service was booked
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          readOnly: true
+          description: Average client rating
+          examples:
+            - 4.8
+        createdAt:
           type: string
           format: date-time
           readOnly: true
-          examples:
-            - '2024-01-15T14:30:00Z'
-        successCallbackUrl:
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    ServiceRequest:
+      description: Service creation/update request
+      type: object
+      required:
+        - name
+        - price
+        - duration
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        price:
+          type: number
+          format: float
+          minimum: 0
+          multipleOf: 0.01
+        discountPrice:
+          type: number
+          format: float
+          minimum: 0
+        duration:
+          type: integer
+          minimum: 5
+          maximum: 480
+          description: Duration in minutes
+        category:
+          type: string
+          enum:
+            - manicure
+            - pedicure
+            - extension
+            - design
+            - repair
+            - other
+        image:
           type: string
           format: uri
-          description: URL which gets invoked upon a successful operation
-          examples:
-            - https://example.com/webhook
-        failureCallbackUrl:
+        isActive:
+          type: boolean
+        isFeatured:
+          type: boolean
+
+    Appointment:
+      description: Scheduled appointment
+      type: object
+      required:
+        - id
+        - clientId
+        - serviceId
+        - startTime
+        - status
+      properties:
+        id:
           type: string
-          format: uri
-          description: URL which gets invoked upon a failed operation
+          format: uuid
+          readOnly: true
           examples:
-            - https://example.com/webhook
+            - "880e8400-e29b-41d4-a716-446655440003"
+        clientId:
+          type: string
+          format: uuid
+          examples:
+            - "550e8400-e29b-41d4-a716-446655440001"
+        serviceId:
+          type: string
+          format: uuid
+          examples:
+            - "770e8400-e29b-41d4-a716-446655440002"
+        staffId:
+          type: string
+          format: uuid
+          description: Assigned technician (optional, system can assign)
+          examples:
+            - "660e8400-e29b-41d4-a716-446655440000"
+        startTime:
+          type: string
+          format: date-time
+          examples:
+            - "2024-01-20T14:30:00Z"
+        endTime:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Calculated based on service duration
+          examples:
+            - "2024-01-20T15:15:00Z"
+        status:
+          type: string
+          enum:
+            - scheduled
+            - confirmed
+            - in-progress
+            - completed
+            - cancelled
+            - no-show
+          default: scheduled
+          examples:
+            - "scheduled"
+        price:
+          type: number
+          format: float
+          minimum: 0
+          readOnly: true
+          description: Total price including discounts
+          examples:
+            - 35.50
+        paid:
+          type: boolean
+          default: false
+          description: Payment status
+        paymentMethod:
+          type: string
+          enum:
+            - cash
+            - card
+            - mobile
+            - other
+          examples:
+            - "card"
+        notes:
+          type: string
+          maxLength: 500
+          examples:
+            - "Client prefers light pressure massage during service"
+        reminderSent:
+          type: boolean
+          readOnly: true
+          default: false
+        reminderSentAt:
+          type: string
+          format: date-time
+          readOnly: true
+        cancelledReason:
+          type: string
+          description: Reason for cancellation if applicable
+          examples:
+            - "Client requested cancellation"
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    AppointmentRequest:
+      description: Appointment creation/update request
+      type: object
+      required:
+        - clientId
+        - serviceId
+        - startTime
+      properties:
+        clientId:
+          type: string
+          format: uuid
+        serviceId:
+          type: string
+          format: uuid
+        staffId:
+          type: string
+          format: uuid
+          description: Optional - system will assign if not provided
+        startTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - scheduled
+            - confirmed
+            - in-progress
+            - completed
+            - cancelled
+            - no-show
+        notes:
+          type: string
+          maxLength: 500
+        paymentMethod:
+          type: string
+          enum:
+            - cash
+            - card
+            - mobile
+            - other
+        paid:
+          type: boolean
+        cancelledReason:
+          type: string
+          description: Required when cancelling an appointment
+
+    DashboardMetrics:
+      description: Key business metrics for dashboard
+      type: object
+      properties:
+        period:
+          type: string
+          examples:
+            - "2024-01"
+        totalRevenue:
+          type: number
+          format: float
+          examples:
+            - 2450.75
+        totalAppointments:
+          type: integer
+          examples:
+            - 32
+        completedAppointments:
+          type: integer
+          examples:
+            - 31
+        cancelledAppointments:
+          type: integer
+          examples:
+            - 1
+        newClients:
+          type: integer
+          examples:
+            - 5
+        totalClients:
+          type: integer
+          examples:
+            - 87
+        averageServicePrice:
+          type: number
+          format: float
+          examples:
+            - 45.25
+        topServices:
+          type: array
+          items:
+            type: object
+            properties:
+              serviceId:
+                type: string
+                format: uuid
+              serviceName:
+                type: string
+              bookingCount:
+                type: integer
+              revenue:
+                type: number
+                format: float
+
+    RevenueAnalytics:
+      description: Revenue trend analysis
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+          examples:
+            - "2024-01-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          examples:
+            - "2024-01-31T23:59:59Z"
+        totalRevenue:
+          type: number
+          format: float
+        dailyRevenue:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date-time
+                examples:
+                  - "2024-01-15T00:00:00Z"
+              revenue:
+                type: number
+                format: float
+              appointmentCount:
+                type: integer
+        averageDailyRevenue:
+          type: number
+          format: float
+        growthPercentage:
+          type: number
+          format: float
+          description: Month-over-month growth percentage
+
+    ClientAnalytics:
+      description: Client statistics and engagement metrics
+      type: object
+      properties:
+        totalClients:
+          type: integer
+          examples:
+            - 150
+        newClientsThisMonth:
+          type: integer
+          examples:
+            - 12
+        returningClients:
+          type: integer
+          examples:
+            - 138
+        clientRetentionRate:
+          type: number
+          format: float
+          description: Percentage of returning clients
+          examples:
+            - 92.0
+        averageVisitsPerClient:
+          type: number
+          format: float
+          examples:
+            - 4.5
+        clientsByFrequency:
+          type: object
+          properties:
+            veryFrequent:
+              type: integer
+              description: 4+ visits/month
+            frequent:
+              type: integer
+              description: 2-3 visits/month
+            occasional:
+              type: integer
+              description: 1 visit/month
+            inactive:
+              type: integer
+              description: No recent visits
+
     PaginatedResource:
-      description: A paginated resource
+      description: Pagination metadata
       type: object
       properties:
         meta:
@@ -794,201 +1693,462 @@ components:
           properties:
             limit:
               type: integer
-              format: int64
               examples:
-                - 10
+                - 20
             offset:
               type: integer
-              format: int64
               examples:
                 - 0
             total:
               type: integer
-              format: int64
               examples:
-                - 100
-            next:
-              type:
-                - string
-                - 'null'
-              examples:
-                - '/planets?limit=10&offset=10'
-    ImageUploadedMessage:
-      x-scalar-ignore: true
-      description: Message about an image upload
+                - 150
+            hasNextPage:
+              type: boolean
+
+    ErrorResponse:
+      description: Standard error response
       type: object
       properties:
+        error:
+          type: string
+          examples:
+            - "Bad Request"
         message:
           type: string
           examples:
-            - Image uploaded successfully
-        imageUrl:
+            - "Invalid email format"
+        code:
           type: string
-          description: The URL where the uploaded image can be accessed
           examples:
-            - https://cdn.scalar.com/images/8f47c132-9d1f-4f83-b5a4-91db5ee757ab.jpg
-        uploadedAt:
+            - "INVALID_INPUT"
+        timestamp:
           type: string
           format: date-time
-          description: Timestamp when the image was uploaded
-          examples:
-            - '2024-01-15T14:30:00Z'
-        fileSize:
-          type: integer
-          description: Size of the uploaded image in bytes
-          examples:
-            - 1048576
-        mimeType:
-          type: string
-          description: The content type of the uploaded image
-          examples:
-            - image/jpeg
-            - image/png
-    BadRequestError:
-      x-scalar-ignore: true
-      description: RFC 7807 (https://datatracker.ietf.org/doc/html/rfc7807)
-      type: object
-      properties:
-        type:
-          type: string
-          examples:
-            - https://example.com/errors/bad-request
-        title:
-          type: string
-          examples:
-            - Bad Request
-        status:
-          type: integer
-          format: int64
-          examples:
-            - 400
-        detail:
-          type: string
-          examples:
-            - The request was invalid.
-    ForbiddenError:
-      x-scalar-ignore: true
-      description: RFC 7807 (https://datatracker.ietf.org/doc/html/rfc7807)
-      type: object
-      properties:
-        type:
-          type: string
-          examples:
-            - https://example.com/errors/forbidden
-        title:
-          type: string
-          examples:
-            - Forbidden
-        status:
-          type: integer
-          format: int64
-          examples:
-            - 403
-        detail:
-          type: string
-          examples:
-            - You are not authorized to access this resource.
-    NotFoundError:
-      x-scalar-ignore: true
-      description: RFC 7807 (https://datatracker.ietf.org/doc/html/rfc7807)
-      type: object
-      properties:
-        type:
-          type: string
-          examples:
-            - https://example.com/errors/not-found
-        title:
-          type: string
-          examples:
-            - Not Found
-        status:
-          type: integer
-          format: int64
-          examples:
-            - 404
-        detail:
-          type: string
-          examples:
-            - The resource you are trying to access does not exist.
-    UnauthorizedError:
-      x-scalar-ignore: true
-      description: RFC 7807 (https://datatracker.ietf.org/doc/html/rfc7807)
-      type: object
-      properties:
-        type:
-          type: string
-          examples:
-            - https://example.com/errors/not-found
-        title:
-          type: string
-          examples:
-            - Unauthorized
-        status:
-          type: integer
-          format: int64
-          examples:
-            - 401
-        detail:
-          type: string
-          examples:
-            - You are not authorized to access this resource.
-    Conflict:
-      x-scalar-ignore: true
-      description: RFC 7807 (https://datatracker.ietf.org/doc/html/rfc7807)
-      type: object
-      properties:
-        type:
-          type: string
-          examples:
-            - https://example.com/errors/conflict
-        title:
-          type: string
-          examples:
-            - Conflict
-        status:
-          type: integer
-          format: int64
-          examples:
-            - 409
-        detail:
-          type: string
-          examples:
-            - The resource you are trying to access is in conflict.
-    UnprocessableEntity:
-      x-scalar-ignore: true
-      description: RFC 7807 (https://datatracker.ietf.org/doc/html/rfc7807)
-      type: object
-      properties:
-        type:
-          type: string
-          examples:
-            - https://example.com/errors/unprocessable-entity
-        title:
-          type: string
-          examples:
-            - Unprocessable Entity
-        status:
-          type: integer
-          format: int64
-          examples:
-            - 422
-        detail:
-          type: string
-          examples:
-            - The request was invalid.
-    Satellite:
-      description: A natural satellite (moon) orbiting a planet
+
+    Staff:
+      description: Staff member / technician profile
       type: object
       required:
-        - name
+        - id
+        - firstName
+        - lastName
+        - email
+        - role
       properties:
-        name:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          examples:
+            - "660e8400-e29b-41d4-a716-446655440000"
+        firstName:
           type: string
           examples:
-            - Phobos
-        diameter:
+            - "Maria"
+        lastName:
+          type: string
+          examples:
+            - "Garcia"
+        email:
+          type: string
+          format: email
+          examples:
+            - "maria@salonatelier.com"
+        phone:
+          type: string
+          examples:
+            - "+1-555-789-0123"
+        role:
+          type: string
+          enum:
+            - owner
+            - manager
+            - technician
+            - receptionist
+          description: Staff role and permissions level
+          examples:
+            - "technician"
+        specialties:
+          type: array
+          description: Services the staff member specializes in
+          items:
+            type: string
+            format: uuid
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - on-leave
+          default: active
+          examples:
+            - "active"
+        commission:
           type: number
           format: float
-          description: Diameter in kilometers
+          description: Commission percentage or base commission amount
+          minimum: 0
           examples:
-            - 22.2
+            - 25.5
+        joinDate:
+          type: string
+          format: date-time
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    StaffRequest:
+      description: Staff member creation/update request
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - role
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+          description: Required for new staff members
+        role:
+          type: string
+          enum:
+            - owner
+            - manager
+            - technician
+            - receptionist
+        specialties:
+          type: array
+          items:
+            type: string
+            format: uuid
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - on-leave
+        commission:
+          type: number
+          format: float
+          minimum: 0
+
+    StaffAvailability:
+      description: Staff member working hours and availability
+      type: object
+      properties:
+        staffId:
+          type: string
+          format: uuid
+        weeklySchedule:
+          type: object
+          description: Working hours for each day of the week
+          properties:
+            monday:
+              $ref: '#/components/schemas/DaySchedule'
+            tuesday:
+              $ref: '#/components/schemas/DaySchedule'
+            wednesday:
+              $ref: '#/components/schemas/DaySchedule'
+            thursday:
+              $ref: '#/components/schemas/DaySchedule'
+            friday:
+              $ref: '#/components/schemas/DaySchedule'
+            saturday:
+              $ref: '#/components/schemas/DaySchedule'
+            sunday:
+              $ref: '#/components/schemas/DaySchedule'
+        specialClosures:
+          type: array
+          description: Dates when staff is unavailable
+          items:
+            type: object
+            properties:
+              startDate:
+                type: string
+                format: date-time
+              endDate:
+                type: string
+                format: date-time
+              reason:
+                type: string
+                examples:
+                  - "Vacation", "Sick leave", "Training"
+
+    DaySchedule:
+      description: Working hours for a specific day
+      type: object
+      properties:
+        isWorking:
+          type: boolean
+          description: Whether staff works on this day
+          default: true
+        startTime:
+          type: string
+          pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+          description: Time in HH:MM format
+          examples:
+            - "09:00"
+        endTime:
+          type: string
+          pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+          description: Time in HH:MM format
+          examples:
+            - "18:00"
+        breakStart:
+          type: string
+          pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+          description: Lunch or break start time (HH:MM format)
+          examples:
+            - "12:00"
+        breakEnd:
+          type: string
+          pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+          description: Lunch or break end time (HH:MM format)
+          examples:
+            - "13:00"
+
+    StaffAvailabilityRequest:
+      description: Staff availability update request
+      type: object
+      properties:
+        weeklySchedule:
+          type: object
+          properties:
+            monday:
+              $ref: '#/components/schemas/DaySchedule'
+            tuesday:
+              $ref: '#/components/schemas/DaySchedule'
+            wednesday:
+              $ref: '#/components/schemas/DaySchedule'
+            thursday:
+              $ref: '#/components/schemas/DaySchedule'
+            friday:
+              $ref: '#/components/schemas/DaySchedule'
+            saturday:
+              $ref: '#/components/schemas/DaySchedule'
+            sunday:
+              $ref: '#/components/schemas/DaySchedule'
+        specialClosures:
+          type: array
+          items:
+            type: object
+            required:
+              - startDate
+              - endDate
+            properties:
+              startDate:
+                type: string
+                format: date-time
+              endDate:
+                type: string
+                format: date-time
+              reason:
+                type: string
+
+    Notification:
+      description: User notification
+      type: object
+      required:
+        - id
+        - type
+        - message
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - appointment
+            - client-message
+            - system
+            - payment
+            - review
+          examples:
+            - "appointment"
+        title:
+          type: string
+          examples:
+            - "New Appointment Scheduled"
+        message:
+          type: string
+          examples:
+            - "Sarah Johnson booked a gel manicure for tomorrow at 2:00 PM"
+        relatedEntity:
+          type: object
+          description: Reference to related resource
+          properties:
+            type:
+              type: string
+              enum:
+                - appointment
+                - client
+                - service
+                - staff
+            id:
+              type: string
+              format: uuid
+        isRead:
+          type: boolean
+          default: false
+        actionUrl:
+          type: string
+          format: uri
+          description: Deep link to navigate to related content
+          examples:
+            - "/appointments/550e8400-e29b-41d4-a716-446655440000"
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        readAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    NotificationPreferences:
+      description: User notification preferences
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        emailNotifications:
+          type: object
+          description: Email notification settings
+          properties:
+            appointmentReminders:
+              type: boolean
+              default: true
+            appointmentConfirmations:
+              type: boolean
+              default: true
+            clientMessages:
+              type: boolean
+              default: true
+            paymentAlerts:
+              type: boolean
+              default: true
+            reviewNotifications:
+              type: boolean
+              default: true
+            businessReports:
+              type: boolean
+              default: true
+        pushNotifications:
+          type: object
+          description: Push notification settings
+          properties:
+            appointmentReminders:
+              type: boolean
+              default: true
+            clientMessages:
+              type: boolean
+              default: true
+            urgentAlerts:
+              type: boolean
+              default: true
+        smsNotifications:
+          type: object
+          description: SMS notification settings
+          properties:
+            appointmentReminders:
+              type: boolean
+              default: false
+            appointmentConfirmations:
+              type: boolean
+              default: false
+        quietHours:
+          type: object
+          description: Do not disturb time window
+          properties:
+            enabled:
+              type: boolean
+              default: false
+            startTime:
+              type: string
+              pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+              description: Quiet hours start time (HH:MM format)
+              examples:
+                - "22:00"
+            endTime:
+              type: string
+              pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+              description: Quiet hours end time (HH:MM format)
+              examples:
+                - "08:00"
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    NotificationPreferencesRequest:
+      description: Notification preferences update request
+      type: object
+      properties:
+        emailNotifications:
+          type: object
+          properties:
+            appointmentReminders:
+              type: boolean
+            appointmentConfirmations:
+              type: boolean
+            clientMessages:
+              type: boolean
+            paymentAlerts:
+              type: boolean
+            reviewNotifications:
+              type: boolean
+            businessReports:
+              type: boolean
+        pushNotifications:
+          type: object
+          properties:
+            appointmentReminders:
+              type: boolean
+            clientMessages:
+              type: boolean
+            urgentAlerts:
+              type: boolean
+        smsNotifications:
+          type: object
+          properties:
+            appointmentReminders:
+              type: boolean
+            appointmentConfirmations:
+              type: boolean
+        quietHours:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            startTime:
+              type: string
+              pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+              description: Time in HH:MM format
+            endTime:
+              type: string
+              pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
+              description: Time in HH:MM format
