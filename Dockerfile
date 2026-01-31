@@ -2,6 +2,11 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+RUN addgroup --system --gid 1000 user && \
+    adduser --system --uid 1000 user
+
+USER user
+
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN corepack install -g pnpm@latest
 

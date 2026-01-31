@@ -1,6 +1,9 @@
 # Stage 1: Base image with dependencies
 FROM node:22-alpine AS base
 
+# Define the variable
+ARG API_RES_PATH=api
+
 WORKDIR /app
 
 # Install security updates and dumb-init
@@ -10,6 +13,10 @@ RUN apk upgrade --no-cache && \
 # Enable corepack for pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN corepack install -g pnpm@latest
+
+# Stage 2: Build stage with all dependencies
+FROM base AS builder
+
 # Download and extract repository from GitHub
 RUN apk add --no-cache curl unzip && \
     curl -L -H "Cache-Control: no-cache" -H "Pragma: no-cache" https://github.com/codegor/hyperion-docs/archive/refs/heads/main.zip?t=$(date +%s) -o repo.zip && \
@@ -18,8 +25,8 @@ RUN apk add --no-cache curl unzip && \
     cp -r hyperion-docs-main/* . && \
     rm -rf repo.zip hyperion-docs-main
 
-# Stage 2: Build stage with all dependencies
-FROM base AS builder
+# Clean target directories before copying
+RUN rm -rf ./apps/docs/openapi ./apps/docs/diagrams ./apps/docs/content/docs
 
 # Copy source code
 COPY ./arch/api ./apps/docs/openapi
@@ -30,8 +37,8 @@ COPY ./arch/documentations ./apps/docs/content/docs
 RUN pnpm install --frozen-lockfile
 
 # Generate OpenAPI docs and build the application
-RUN pnpm build:api-doc && \
-    pnpm turbo build --filter=docs
+# RUN pnpm build:api-doc // pnpm turbo prebuild exec this step
+RUN pnpm turbo build --filter=docs
 
 # Stage 3: Production runner
 FROM node:22-alpine AS runner
