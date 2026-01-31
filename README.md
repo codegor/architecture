@@ -21,7 +21,24 @@ make build-api
 
 # Stop services
 make stop
+
+# Build production image
+make prod-build
+
+# Run production container
+make prod-run
 ```
+
+### Environment Variables
+
+Create a `.env` file for default settings:
+
+**`.env`** (default, safe to commit)
+```
+prod_port=3000
+```
+
+The Makefile will automatically use `.env.local` if it exists, otherwise fallback to `.env`.
 
 ### Docker Setup
 
@@ -48,15 +65,14 @@ arch/
 │   └── api/
 │       ├── index.mdx
 │       └── meta.json
-└── diagrams/              # Diagram source files
-    ├── architecture.puml
-    ├── erd.puml
-    ├── include-erd.puml
-    ├── system-overview.puml
-    └── flow.dot
-
-api-doc-gen/
-└── sample.yaml            # OpenAPI schema files
+├── diagrams/              # Diagram source files
+│   ├── architecture.puml
+│   ├── erd.puml
+│   ├── include-erd.puml
+│   ├── system-overview.puml
+│   └── flow.dot
+└── api/                   # OpenAPI schema files
+    └── sample.yaml
 ```
 
 ## Building Documentation
@@ -75,7 +91,7 @@ This starts the documentation server at **http://localhost:3000** with hot reloa
 make build-api
 ```
 
-Generates API documentation from OpenAPI schemas in `api-doc-gen/` directory.
+Generates API documentation from OpenAPI schemas in `arch/api/` directory.
 
 ### Stop Services
 
@@ -141,6 +157,8 @@ If diagrams aren't rendering:
 | Start development | `make run` |
 | Build API docs | `make build-api` |
 | Stop services | `make stop` |
+| Build production | `make prod-build` |
+| Run production | `make prod-run` |
 | View docs | http://localhost:3000 |
 
 ## Development
@@ -160,6 +178,35 @@ pnpm dev
 2. Add diagrams to `arch/diagrams/`
 3. Update navigation in `arch/content/docs/meta.json`
 4. Changes hot-reload automatically
+
+## Run in production
+
+### Build production image
+```bash
+make prod-build
+# OR
+docker build . -f Dockerfile.prod -t architecture
+```
+It will build production-optimized image with all dependencies installed.
+
+### Run docker container
+```bash
+make prod-run
+# OR
+docker run --env KROKI_BASE_URL=https://kroki.io -p 3000:3000 architecture
+```
+
+The `make prod-run` command automatically uses the port defined in your `.env` or `.env.local` file (default 3000 or 3050).
+
+You can also override the port:
+```bash
+make prod-run prod_port=9000
+```
+
+Now you can see docs on **http://localhost:<port>** (e.g., **http://localhost:3000** or **http://localhost:3050**).
+
+Please note that you need to set `KROKI_BASE_URL` to your Kroki instance. Here we set it to `https://kroki.io`,
+what is public instance of Kroki but it could be insecure or unavailable to use in your production.
 
 ## License
 
