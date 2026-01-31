@@ -4,7 +4,7 @@ else ifneq (,$(wildcard .env))
 	include .env
 endif
 
-.PHONY: run stop up down prod-build prod-run
+.PHONY: run stop up down prod-build prod-run static-prod-build
 
 run:
 	docker compose up
@@ -19,7 +19,10 @@ stop:
 	docker compose stop
 
 prod-build:
-	docker build . -f Dockerfile.prod -t architecture
+	docker build . -f Dockerfile.prod -t architecture --no-cache
+
+static-prod-build:
+	docker build . -f Dockerfile.prod -t architecture-static --build-arg IS_PROD_STATIC=true --no-cache
 
 prod-run:
 	docker run --env KROKI_BASE_URL=https://kroki.io -p ${prod_port}:3000 architecture
