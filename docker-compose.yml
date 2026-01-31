@@ -6,16 +6,16 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - API_RES_PATH=api
       - KROKI_BASE_URL=http://kroki:8000
       - WATCHPACK_POLLING=true
     ports:
       - "3000:3000"
     command: sh -c "pnpm build:api-doc && pnpm turbo dev --filter=docs"
     volumes:
-      - ./arch/diagrams:/app/apps/docs/arch/diagrams
-      - ./arch/documentations:/app/apps/docs/arch/content/docs
-      - ./arch/api:/app/apps/docs/api-doc-gen
+      - ./arch/diagrams:/app/apps/docs/diagrams
+      - ./arch/documentations:/app/apps/docs/content/docs
+      - ./arch/api:/app/apps/docs/openapi
     depends_on:
       - kroki
 
